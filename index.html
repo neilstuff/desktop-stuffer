@@ -311,9 +311,9 @@
         }
         /* disable selection */
         
-        :not(input):not(textarea),
-        :not(input):not(textarea)::after,
-        :not(input):not(textarea)::before {
+         :not(input):not(textarea),
+         :not(input):not(textarea)::after,
+         :not(input):not(textarea)::before {
             -webkit-user-select: none;
             user-select: none;
             cursor: default;
@@ -588,6 +588,13 @@
             }
 
             document.getElementById('cards').style.display = "inline-block";
+
+            var cards = document.getElementsByClassName('card');
+
+            for (let card = 0; card < cards.length; card++) {
+                cards[card].style.borderBottom = "3px solid white";
+            }
+
 
         });
     </script>
