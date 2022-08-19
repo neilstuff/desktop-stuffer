@@ -363,6 +363,13 @@
             background: rgba(0, 0, 0, 0.05);
             border-radius: 5px;
         }
+        kbd.key {
+            border-radius: 3px;
+            padding: 1px 2px 0;
+            color: white;
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 1px solid black;
+        }
     </style>
 
     <script type="text/template" id="template">
@@ -448,7 +455,7 @@
             var translateX = 0;
             var translateY = 0;
 
-            if (adjustment != 1.0) {
+            if (adjustment == 0.5) {
                 translateX = -(viewportWidth * adjustment + 15);
                 translateY = -(viewportHeight * adjustment + 5);
 
@@ -456,7 +463,16 @@
 
                 adjustedWidth = adjustedWidth * adjustment;
                 adjustedHeight = adjustedHeight * adjustment + 28;
+ 
+            } else if (adjustment == 0.75) {
+                translateX = -(viewportWidth * (1.00 - adjustment) - 54);
+                translateY = -(viewportHeight * (1.00 - adjustment) - 50);
 
+                console.log(translateX, translateY)
+
+                adjustedWidth = adjustedWidth * adjustment - 18;
+                adjustedHeight = adjustedHeight * adjustment;   
+            
             }
 
             var html = template.replace('<%=url%>', url).
