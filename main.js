@@ -7,7 +7,6 @@ const { app } = electron;
 const { protocol } = electron;
 const { ipcMain } = electron;
 
-
 const BrowserWindow = electron.BrowserWindow;
 
 const mime = require('mime');
@@ -48,7 +47,7 @@ function createWindow() {
     }
 
     mainWindow.setMenu(null);
-    mainWindow.setTitle('Dr Neil\'s Stuff');
+    mainWindow.setTitle('Neil\'s Navigator');
     mainWindow.loadURL(url.format({
         pathname: path.join(__dirname, 'index.html'),
         protocol: 'file',
