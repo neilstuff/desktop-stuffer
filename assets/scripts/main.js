@@ -1,5 +1,24 @@
 var manifests = [];
 
+const categories = {
+    "Utility": {
+        "button": "apps-cards",
+        "view": "apps-cardbox"
+    },
+    "Fun": {
+        "button": "fun-cards",
+        "view": "fun-cardbox"
+    },
+    "Game": {
+        "button": "games-cards",
+        "view": "games-cardbox"
+    },
+    "App": {
+        "button": "apps-cards",
+        "view": "apps-cardbox"
+    }
+
+}
 
 function install_package() {
     var element = document.getElementById("package-url");
@@ -89,8 +108,7 @@ function display(manifest, id, callback) {
 
     var element = document.getElementById("template");
     var template = element.text;
-    var view = (manifest.category == "Game" ? "games-cardbox" : "apps-cardbox");
-
+    var view = categories[manifest.category].view;
 
     var cardValue = template.replace(/<%=callback%>/g, callback).
         replace(/<%=id%>/g, id).
@@ -186,7 +204,7 @@ window.api.on('load-complete', (channel, args) => {
     document.getElementById(window.activeCards).style.display = "inline-block";
 
     var cards = document.getElementsByClassName('card');
-    
+
     for (let card = 0; card < cards.length; card++) {
         cards[card].style.borderBottom = "3px solid white";
     }
@@ -198,8 +216,50 @@ window.setTimeout(function () {
     document.getElementById("splash-page").classList.toggle("hidden");
 
     window.setTimeout(function () {
-
         document.getElementById("main").style.display = "inline-block";
+
+        let tab_buttons = document.querySelectorAll(".tab-button");
+
+        tab_buttons.forEach((item) => {
+
+            item.addEventListener("click", (e) => {
+
+                function inactivateAll() {
+
+                    let tab_buttons = document.querySelectorAll(".tab-button");
+
+                    for (let tab_button = 0; tab_button < tab_buttons.length; tab_button++) {
+                        tab_buttons[tab_button].children[0].classList.replace("rotate-active", "rotate-inactive");
+                    }
+
+                }
+
+                function hideAllViews() {
+
+                    let views = document.querySelectorAll(".view");
+
+                    for (let view = 0; view < views.length; view++) {
+                        views[view].style.display = "none";
+                    }
+
+                }
+
+                if (e.currentTarget.children[0].classList.contains("rotate-inactive")) {
+
+                    inactivateAll();
+
+                    e.currentTarget.children[0].classList.replace("rotate-inactive", "rotate-active");
+
+                    hideAllViews();
+
+                    document.getElementById(`${e.currentTarget.id}-cards`).style.display = "inline-block";
+
+                }
+
+            });
+
+        });
+
 
     }, 1500);
 
