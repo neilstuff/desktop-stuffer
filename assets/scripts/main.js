@@ -78,13 +78,13 @@ function play(name, url, height, width, scale) {
         adjustedHeight = adjustedHeight * adjustment + 28;
 
     } else if (adjustment == 0.75) {
-        translateX = -(viewportWidth * (1.00 - adjustment) - 54);
-        translateY = -(viewportHeight * (1.00 - adjustment) - 50);
+        translateX = -(viewportWidth * (1.00 - adjustment) - 60);
+        translateY = -(viewportHeight * (1.00 - adjustment) - 55);
 
         console.log(translateX, translateY)
 
         adjustedWidth = adjustedWidth * adjustment - 18;
-        adjustedHeight = adjustedHeight * adjustment;
+        adjustedHeight = adjustedHeight * adjustment + 5;
 
     }
 

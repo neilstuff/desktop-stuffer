@@ -16,6 +16,7 @@ const fs = require('fs');
 const os = require('os');
 const https = require('https');
 var JSZip = require("jszip");
+var unzipper = require("unzipper");
 
 var mainWindow = null;
 
@@ -67,25 +68,25 @@ app.on('ready', () => {
 });
 
 
-ipcMain.on('install', function(event, arg) {
+ipcMain.on('install', function (event, arg) {
     var data = [];
     var zipfile = path.basename(new URL(arg).pathname);
     var content = "";
 
-    var request = https.get(url.parse(arg), function(response) {
+    var request = https.get(url.parse(arg), function (response) {
         response.on('data', (chunk) => {
             data.push(chunk);
         });
 
-        response.on('end', function() {
+        response.on('end', function () {
 
             function expand(dir, zip) {
 
-                return new Promise(async(accept, reject) => {
+                return new Promise(async (accept, reject) => {
 
                     function createDir(dir) {
 
-                        return new Promise(async(accept, reject) => {
+                        return new Promise(async (accept, reject) => {
 
                             fs.mkdirSync(dir, {
                                 recursive: true
@@ -106,10 +107,9 @@ ipcMain.on('install', function(event, arg) {
 
                     console.log(files);
 
-                    zip.forEach(async function(relativePath, zipEntry) {
+                    zip.forEach(async function (relativePath, zipEntry) {
                         var dest = path.join(dir, zipEntry.name);
 
-                        console.log(relativePath);
 
                         if (zipEntry.dir) {
                             console.log("Dir:", zipEntry.name);
@@ -132,7 +132,7 @@ ipcMain.on('install', function(event, arg) {
 
             var buffer = Buffer.concat(data);
 
-            JSZip.loadAsync(buffer).then(async function(zip) {
+            JSZip.loadAsync(buffer).then(async function (zip) {
                 var dir = path.join(__dirname, 'packages');
 
                 fs.mkdirSync(dir, {
@@ -145,7 +145,7 @@ ipcMain.on('install', function(event, arg) {
                     }
                 });
 
-                fs.writeFile(path.join(dir, zipfile), buffer, "binary", function(err) {
+                fs.writeFile(path.join(dir, zipfile), buffer, "binary", function (err) {
 
                     if (err) {
                         console.log(err);
@@ -157,27 +157,33 @@ ipcMain.on('install', function(event, arg) {
 
                 await expand(dir, zip);
 
-            }).then(function(text) {});
+            }).then(function (text) { });
 
         });
 
-    }).on('error', function(err) {
+    }).on('error', function (err) {
         console.log(err.message);
         event.sender.send('retrieve-complete', err.message);
     });
 
 });
 
-ipcMain.on('load', async function(event, arg) {
+ipcMain.on('load', async function (event, arg) {
+    function sleep(ms) {
+        return new Promise((resolve) => {
+          setTimeout(resolve, ms);
+        });
+      }
+
     function processZip(data) {
 
-        return new Promise(async(accept, reject) => {
+        return new Promise(async (accept, reject) => {
             var zip = new JSZip();
             var manifest = {};
 
-            zip.loadAsync(data).then(async function(zip) {
+            zip.loadAsync(data).then(async function (zip) {
 
-                var files = zip.filter(function(relativePath, file) {
+                var files = zip.filter(function (relativePath, file) {
                     return relativePath.endsWith(".manifest/manifest.json");
                 });
 
@@ -185,7 +191,7 @@ ipcMain.on('load', async function(event, arg) {
 
                 manifest = JSON.parse(content);
 
-            }).then(function() {
+            }).then(function () {
                 accept(manifest);
             });
 
@@ -201,9 +207,9 @@ ipcMain.on('load', async function(event, arg) {
 
     for (const file of files) {
         function readZip(filename) {
-            return new Promise(async(accept, reject) => {
+            return new Promise(async (accept, reject) => {
 
-                fs.readFile(filename, async function(err, data) {
+                fs.readFile(filename, async function (err, data) {
 
                     if (err) {
 
@@ -227,17 +233,29 @@ ipcMain.on('load', async function(event, arg) {
         }
 
         var filename = path.join(__dirname, 'packages', file);
-        console.log("Loading: ", filename);
 
         if (filename.endsWith(".zip")) {
+            console.log("Loading: ", filename);
 
             var manifest = await readZip(filename)
 
             manifests.push(manifest);
 
+            console.log("Unzipping: ", filename);
+
+            fs.createReadStream(filename)
+                .pipe(unzipper.Extract({ path: path.join(__dirname, 'packages', file.replace(".zip", "")) }));
+
+
+        } else {
+            console.log("Removing: ", filename);
+
+            fs.rmSync(filename, { recursive: true, force: true });
         }
 
     }
+
+    await sleep(500);
 
     console.log("Load Completed...");
 
