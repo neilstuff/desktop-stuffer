@@ -9,7 +9,8 @@
     <link rel="stylesheet" href="assets/styles/rotate.css">
 
     <script type="text/template" id="template">
-        <div id="card-<%=view%>-<%=id%>" class="card" style="border-bottom: 3px, solid white;" onclick="<%=callback%>('<%=id%>', '<%=view%>');">
+        <div id="card-<%=view%>-<%=id%>" class="card" style="border-bottom: 3px, solid white;" 
+            onclick="<%=callback%>('click', '<%=id%>', '<%=view%>');" ondblclick="<%=callback%>('dblclick', '<%=id%>', '<%=view%>');">
             <img src="<%=image%>"></img>
             <label value="<%=label%>"><%=label%></label>
         </div>

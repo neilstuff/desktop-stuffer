@@ -122,7 +122,7 @@ function display(manifest, id, callback) {
 
 }
 
-function details(id, view) {
+function viewDetails(id, view) {
     var element = document.getElementById("view");
     var template = element.text;
     var entry = parseInt(id);
@@ -181,6 +181,31 @@ function details(id, view) {
         `"${manifests[entry]['play']['scale']}")`;
 }
 
+function playGame(id, view) {
+    var entry = parseInt(id);
+    var repository = manifests[entry];
+
+    var url = manifests[entry]['url'].replaceAll("\\", "\\\\");
+
+    play(manifests[entry]['label'], 
+        url, manifests[entry]['play']['size']['height'], 
+        manifests[entry]['play']['size']['width'], 
+        manifests[entry]['play']['scale']);
+        
+}
+
+function details(activation, id, view) {
+
+    if (activation == "click") {
+        viewDetails(id, view);
+    }
+
+    if (activation == "dblclick") {
+        playGame(id, view);
+    }
+
+}
+
 document.addEventListener("DOMContentLoaded", (event) => {
 
     document.addEventListener('dragover', event => event.preventDefault());
@@ -208,7 +233,6 @@ window.api.on('load-complete', (channel, args) => {
     for (let card = 0; card < cards.length; card++) {
         cards[card].style.borderBottom = "3px solid white";
     }
-
 
 });
 
