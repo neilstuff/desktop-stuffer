@@ -19,16 +19,18 @@ var JSZip = require("jszip");
 var unzipper = require("unzipper");
 
 var mainWindow = null;
+const PACKAGES = "packages"
+const CACHE = ".cache"
 
 function createWindow() {
 
     mainWindow = new BrowserWindow({
         width: (config.mode == "debug") ? 1500 : 1200,
-        height: 840,
+        height: 900,
         resizable: true,
         frame: true,
         maximizable: true,
-        minHeight: 840,
+        minHeight: 900,
         minWidth: (config.mode == "debug") ? 1500 : 1200,
         fullscreenable: true,
         autoHideMenuBar: true,
@@ -133,14 +135,14 @@ ipcMain.on('install', function (event, arg) {
             var buffer = Buffer.concat(data);
 
             JSZip.loadAsync(buffer).then(async function (zip) {
-                var dir = path.join(__dirname, 'packages');
+                var dir = path.join(__dirname, PACKAGES);
 
                 fs.mkdirSync(dir, {
                     recursive: true
                 }, (err) => {
                     if (err) {
                         event.sender.send('install-complete', err);
-                        console.log("error occurred in creating new directory", err);
+                        console.log("error occurred in creating 'packages'directory", err);
                         return;
                     }
                 });
@@ -199,11 +201,15 @@ ipcMain.on('load', async function (event, arg) {
 
     }
 
-    var dir = path.join(__dirname, 'packages');
+    
+    fs.rmSync( path.join(__dirname, CACHE), { recursive: true, force: true });
+
+    var dir = path.join(__dirname, PACKAGES);
 
     const files = await fs.promises.readdir(dir);
 
     var manifests = [];
+
 
     for (const file of files) {
         function readZip(filename) {
@@ -220,9 +226,9 @@ ipcMain.on('load', async function (event, arg) {
 
                     manifest["filename"] = filename;
                     manifest["base"] = file.replace(".zip", "");
-                    manifest["url"] = path.join("packages", file.replace(".zip", ""), "index.html");
-                    manifest["manifest"] = path.join("packages", file.replace(".zip", ""), ".manifest");
-                    manifest["path"] = path.join("packages", file);
+                    manifest["url"] = path.join(CACHE, file.replace(".zip", ""), "index.html");
+                    manifest["manifest"] = path.join(CACHE, file.replace(".zip", ""), ".manifest");
+                    manifest["path"] = path.join(CACHE, file);
 
                     accept(manifest);
 
@@ -232,7 +238,7 @@ ipcMain.on('load', async function (event, arg) {
 
         }
 
-        var filename = path.join(__dirname, 'packages', file);
+        var filename = path.join(__dirname, PACKAGES, file);
 
         if (filename.endsWith(".zip")) {
             console.log("Loading: ", filename);
@@ -244,7 +250,7 @@ ipcMain.on('load', async function (event, arg) {
             console.log("Unzipping: ", filename);
 
             fs.createReadStream(filename)
-                .pipe(unzipper.Extract({ path: path.join(__dirname, 'packages', file.replace(".zip", "")) }));
+                .pipe(unzipper.Extract({ path: path.join(__dirname, CACHE, file.replace(".zip", "")) }));
 
 
         } else {
