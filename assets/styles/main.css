@@ -109,10 +109,28 @@
     opacity: 0.6;
 }
 
+
+.modal-btn-disabled {
+    position: relative;
+    font-size: 12px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    border: none;
+    /* Remove borders */
+    color: black;
+    border: 2px solid #9a9b99;
+    background-color: #dbe2da;
+    padding: 6px 14px;
+    margin: 4px 2px;
+    border-radius: 4px;
+    left: -15px;
+    cursor: pointer;
+    /* Add a pointer cursor on mouse-over */
+}
+
 .modal-label {
     color: black;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    font-size: 11px;
+    font-size: 10px;
 }
 
 .modal-entry {

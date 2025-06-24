@@ -74,8 +74,8 @@
     </div>
     <div id="main" style="display:none">
         <div style="position:absolute; top:0px; height:40px; left:0px; right:0px; background-color:rgb(36,41,46)">
-            <div style="position:absolute; top:-2px; left:5px;">
-                <img src="assets/images/8-Bit-Logo.png" width="42" height="42" />
+            <div style="position:absolute; top:5px; left:5px;">
+                <img src="assets/images/icon.png" width="32" height="32" />
             </div>
             <div style="position:absolute; top:-2px; height:40px; left:46px; right:0px; background-color:rgb(36,41,46)">
                 <h1
@@ -93,8 +93,9 @@
                                 </svg>
                             </a>
                             <div class="dropdown-content">
-                                <a onclick="help()" title="Install">Install</a>
-                                <a onclick="about()" title="Install">About</a>
+                                <a onclick="install()" title="Install">Install</a>
+                                <a onclick="load()" title="Load">Load</a>
+                                <a onclick="about()" title="About">About</a>
                             </div>
                         </li>
                     </ul>
@@ -104,11 +105,11 @@
         <div id="stuff"
             style="position: absolute; top: 50px; bottom: 10px; left: 10px; right: 310px; background-color: rgb(255, 255, 255); ">
         </div>
-        
+
         <div id="games" class="tab-button" style="position: absolute; top: 55px; left:5px">
             <div class="rotate-active">Games</div>
         </div>
-        
+
         <div id="apps" class="tab-button" style="position: absolute; top: 135px; left:5px">
             <div class="rotate-inactive">Apps</div>
         </div>
@@ -128,7 +129,7 @@
         </div>
 
         <div id="fun-cards" class="view"
-             style="position: absolute; top: 50px; bottom: 10px; left: 35px; right: 310px;  border: 1px solid rgba(0, 0, 0, 0.2);  flex-wrap: wrap; align-content: flex-start; background-color: rgb(255, 255, 255); overflow: auto; display:none;">
+            style="position: absolute; top: 50px; bottom: 10px; left: 35px; right: 310px;  border: 1px solid rgba(0, 0, 0, 0.2);  flex-wrap: wrap; align-content: flex-start; background-color: rgb(255, 255, 255); overflow: auto; display:none;">
             <div id="fun-cardbox" class="cardbox"> </div>
         </div>
 
@@ -141,13 +142,15 @@
                     style="display:none; position:absolute; height:32px; bottom:0px; left:0px; right:0px; margin:10px 10px 0px 10px; padding: 8px; border-top:1px solid rgba(0,0,0,0.2); ">
                     <span style="float:right"> <a id="play" href="null" class="actions"
                             style="cursor:pointer; width:32px; height:32px; font-size: 24px; text-decoration: none;">
-                            <img class="button-enhancer" src="assets/images/play.svg" width="32" height="32" style="cursor:pointer;" />
+                            <img class="button-enhancer" src="assets/images/play.svg" width="32" height="32"
+                                style="cursor:pointer;" />
                         </a>
                     </span>
                 </div>
             </div>
         </div>
-        <div class="model" id="help-dialog" style="display:none">
+
+        <div class="model" id="install-dialog" style="display:none">
             <div style="position:absolute; padding:120px; top:0px; bottom:0px; left:0px; right:0px;">
                 <div class="modal-content" style="margin-top:40px; width:540px;">
                     <div class="modal-header" style="background-color: black">
@@ -176,6 +179,40 @@
             </div>
         </div>
 
+        <div class="model" id="load-dialog" style="display:none">
+            <div style="position:absolute; padding:120px; top:0px; bottom:0px; left:0px; right:0px;">
+                <div class="modal-content" style="margin-top:40px; width:540px;">
+                    <div class="modal-header" style="background-color: black">
+                        <span class="close" id="close" onclick="close_model_panel()">&times;</span>
+                        <h2 id="dialog_title">Load a package</h2>
+                    </div>
+                    <div class="modal-body" id="text" style="background: rgba(0,0,0,0.0.5); height:150px;">
+                        <div id="getting_started_panel" class="modal-scroll-panel"
+                            style="position:absolute; top:50px; bottom:36px; left:0px; right:0px; overflow:auto; ">
+                            <table style="margin:5px;" cellpadding="10">
+                                <tr>
+                                    <td><label class="modal-label"></label>Package</td>
+                                    <td><input class="modal-entry" id="package-file-name" type="text"
+                                            name="package-file-name" placeholder="Package File Name..."
+                                            required readonly></input>
+                                    </td>
+                                    <td><input id="select-package" type="button" value="..."
+                                            name="package-file-name">
+                                        </input>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div style="padding: 10px; margin-left:10px;">
+                        <button class="modal-btn-disabled" id="upload-package" onclick="upload_package();" disabled>Install</button>
+                        <button class="modal-cancel-btn" id="cancel-install"
+                            onclick="close_model_panel();">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="model" id="about-dialog" style="display:none">
             <div style="position:absolute; padding:120px; top:0px; bottom:0px; left:0px; right:0px;">
                 <div class="modal-content" style="margin-top:40px; width:440px;">
@@ -184,10 +221,11 @@
                         <h2 id="dialog_title">About</h2>
                     </div>
                     <div class="modal-body" id="text" style="background: rgba(0,0,0,0.0.5); height:150px;">
-                        
-                        <img src="assets/images/Ski-Free-Yeti.gif" style="display:block; margin:auto"/>
-                         <p style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; font-size: 14px;">
-                        (c) Neil Brittliff - 2024</p>
+
+                        <img src="assets/images/Ski-Free-Yeti.gif" style="display:block; margin:auto" />
+                        <p
+                            style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; font-size: 14px;">
+                            (c) Neil Brittliff - 2024</p>
                     </div>
                 </div>
             </div>

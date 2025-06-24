@@ -25,13 +25,13 @@ const CACHE = ".cache"
 function createWindow() {
 
     mainWindow = new BrowserWindow({
-        width: (config.mode == "debug") ? 1500 : 1200,
-        height: 900,
+        width: (config.mode == "debug") ? 1500 : 1400,
+        height: 960,
         resizable: true,
         frame: true,
         maximizable: true,
-        minHeight: 900,
-        minWidth: (config.mode == "debug") ? 1500 : 1200,
+        minHeight: 960,
+        minWidth: (config.mode == "debug") ? 1500 : 1400,
         fullscreenable: true,
         autoHideMenuBar: true,
 

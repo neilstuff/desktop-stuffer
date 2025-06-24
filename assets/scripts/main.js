@@ -38,8 +38,12 @@ function about() {
     document.getElementById('about-dialog').style.display = "inline-block";
 }
 
-function help() {
-    document.getElementById('help-dialog').style.display = "inline-block";
+function install() {
+    document.getElementById('install-dialog').style.display = "inline-block";
+}
+
+function load() {
+    document.getElementById('load-dialog').style.display = "inline-block";
 }
 
 function close_model_panel() {
@@ -53,6 +57,26 @@ function close_model_panel() {
     }
 
     document.getElementById('viewer').innerHTML = "<html></html>";
+
+}
+
+function upload() {
+
+    var fileUtil = new FileUtil(document);
+
+    fileUtil.load(async function (files) {
+ 
+        for (var file = 0; file < files.length; file++) {
+
+            document.getElementById("package-file-name").value = files[file].name;
+
+            window.packages.push(files[file]);
+
+            enableButton("upload-package");
+
+        }
+
+    });
 
 }
 
@@ -187,11 +211,11 @@ function playGame(id, view) {
 
     var url = manifests[entry]['url'].replaceAll("\\", "\\\\");
 
-    play(manifests[entry]['label'], 
-        url, manifests[entry]['play']['size']['height'], 
-        manifests[entry]['play']['size']['width'], 
+    play(manifests[entry]['label'],
+        url, manifests[entry]['play']['size']['height'],
+        manifests[entry]['play']['size']['width'],
         manifests[entry]['play']['scale']);
-        
+
 }
 
 function details(activation, id, view) {
@@ -207,6 +231,8 @@ function details(activation, id, view) {
 }
 
 document.addEventListener("DOMContentLoaded", (event) => {
+
+    window.packages = [];
 
     document.addEventListener('dragover', event => event.preventDefault());
     document.addEventListener('drop', event => event.preventDefault());
