@@ -20,16 +20,25 @@ const categories = {
 
 }
 
-function install_package() {
-    var element = document.getElementById("package-url");
+function install() {
 
-    window.api.install(element.value);
+    window.api.install();
 
 }
 
 window.api.on('install-complete', (channel, args) => {
 
-    close_model_panel();
+    var manifest = JSON.parse(args);
+
+    manifests.push(manifest);
+    
+    display(manifest, manifests.length, "details");
+
+    var cards = document.getElementsByClassName('card');
+
+    for (let card = 0; card < cards.length; card++) {
+        cards[card].style.borderBottom = "3px solid white";
+    }
 
 });
 
@@ -38,16 +47,9 @@ function about() {
     document.getElementById('about-dialog').style.display = "inline-block";
 }
 
-function install() {
-    document.getElementById('install-dialog').style.display = "inline-block";
-}
 
-function load() {
-    document.getElementById('load-dialog').style.display = "inline-block";
-}
-
-function close_model_panel() {
-    var dialogs = document.getElementsByClassName('model')
+function close_modal_panel() {
+    var dialogs = document.getElementsByClassName('modal')
 
     for (var dialog in dialogs) {
         if (dialogs[dialog].style) {
@@ -60,26 +62,6 @@ function close_model_panel() {
 
 }
 
-function upload() {
-
-    var fileUtil = new FileUtil(document);
-
-    fileUtil.load(async function (files) {
- 
-        for (var file = 0; file < files.length; file++) {
-
-            document.getElementById("package-file-name").value = files[file].name;
-
-            window.packages.push(files[file]);
-
-            enableButton("upload-package");
-
-        }
-
-    });
-
-}
-
 function play(name, url, height, width, scale) {
     var element = document.getElementById("player");
 
@@ -89,28 +71,11 @@ function play(name, url, height, width, scale) {
     var adjustedWidth = parseInt(width);
     var adjustedHeight = parseInt(height);
 
-    var viewportWidth = parseInt(width) - 30;
-    var viewportHeight = parseInt(height) - 70;
-    var translateX = 0;
-    var translateY = 0;
+    var viewportWidth = parseInt(width);
+    var viewportHeight = parseInt(height);
 
-    if (adjustment == 0.5) {
-        translateX = -(viewportWidth * adjustment + 15);
-        translateY = -(viewportHeight * adjustment + 5);
-
-        adjustedWidth = adjustedWidth * adjustment;
-        adjustedHeight = adjustedHeight * adjustment + 28;
-
-    } else if (adjustment == 0.75) {
-        translateX = -(viewportWidth * (1.00 - adjustment) - 60);
-        translateY = -(viewportHeight * (1.00 - adjustment) - 55);
-
-        console.log(translateX, translateY)
-
-        adjustedWidth = adjustedWidth * adjustment - 18;
-        adjustedHeight = adjustedHeight * adjustment + 5;
-
-    }
+    adjustedWidth = adjustedWidth * adjustment + 30;
+    adjustedHeight = adjustedHeight * adjustment + 70;
 
     var html = template.replace('<%=url%>', url).
         replace('<%=title%>', name).
@@ -118,12 +83,15 @@ function play(name, url, height, width, scale) {
         replace('<%=height%>', adjustedHeight).
         replace('<%=viewport-width%>', viewportWidth).
         replace('<%=viewport-height%>', viewportHeight).
-        replace('<%=scale%>', parseFloat(scale)).
-        replace('<%=translate-x%>', translateX).
-        replace('<%=translate-y%>', translateY);
+        replace('<%=scale%>', parseFloat(scale));
 
 
     document.getElementById('viewer').innerHTML = html;
+
+    var top = (window.innerHeight/2) - (adjustedHeight/2) - 40;
+    document.getElementById('player-dialog').style.top =  `${top < 40 ? 0 : top}px`
+    document.getElementById('player-dialog').style.left = `${(window.innerWidth/2) - (adjustedWidth/2)}px`;
+
     document.getElementById('player-viewer').focus();
 
 }

@@ -6,6 +6,7 @@ const electron = require('electron');
 const { app } = electron;
 const { protocol } = electron;
 const { ipcMain } = electron;
+const { dialog } = electron;
 
 const BrowserWindow = electron.BrowserWindow;
 
@@ -22,15 +23,119 @@ var mainWindow = null;
 const PACKAGES = "packages"
 const CACHE = ".cache"
 
+function installPackage(filename) {
+
+    return new Promise(async (accept, reject) => {
+        console.log("COPY - File name: " + filename);
+        console.log("COPY - Base Name: " + path.basename(filename));
+
+        var destination = path.join(__dirname, PACKAGES, path.basename(filename));
+
+        fs.copyFile(filename, destination, (err) => {
+            if (err) {
+                reject(err);
+            }
+            accept(0);
+            console.log('File installed correctly');
+        });
+
+    });
+
+}
+
+function expand(dir, zip) {
+
+    return new Promise(async (accept, reject) => {
+
+        function createDir(dir) {
+
+            return new Promise(async (accept, reject) => {
+
+                fs.mkdirSync(dir, {
+                    recursive: true
+                }, (err) => {
+                    if (err) {
+                        reject(dir);
+                        return;
+                    } else {
+                        accept(dir)
+                    }
+                });
+
+            })
+
+        }
+
+        const files = zip.folder("/");
+
+        console.log(files);
+
+        accept("complete");
+
+    });
+
+}
+
+function processZip(data) {
+
+    return new Promise(async (accept, reject) => {
+        var zip = new JSZip();
+        var manifest = {};
+
+        zip.loadAsync(data).then(async function (zip) {
+
+            var files = zip.filter(function (relativePath, file) {
+                return relativePath.endsWith(".manifest/manifest.json");
+            });
+
+            var content = await files[0].async("string");
+
+            manifest = JSON.parse(content);
+
+        }).then(function () {
+            accept(manifest);
+        });
+
+    });
+
+}
+
+function readZip(base, filename) {
+    return new Promise(async (accept, reject) => {
+
+        fs.readFile(filename, async function (err, data) {
+
+            if (err) {
+
+                reject(err);
+            }
+
+            var manifest = await processZip(data);
+            var archive = base.replace(".zip", "");
+
+            manifest["filename"] = filename;
+            manifest["base"] = archive;
+            manifest["url"] = path.join(CACHE, archive, "index.html");
+            manifest["manifest"] = path.join(CACHE, archive, ".manifest");
+            manifest["path"] = path.join(CACHE, base);
+
+            accept(manifest);
+
+        });
+
+    });
+
+}
+
 function createWindow() {
 
     mainWindow = new BrowserWindow({
         width: (config.mode == "debug") ? 1500 : 1200,
-        height: 860,
+        height: 880,
         resizable: true,
         frame: true,
         maximizable: true,
-        minHeight: 860,
+        minHeight: 880,
         minWidth: (config.mode == "debug") ? 1500 : 1200,
         fullscreenable: true,
         autoHideMenuBar: true,
@@ -69,140 +174,49 @@ app.on('ready', () => {
 
 });
 
+ipcMain.on('install', async function (event) {
 
-ipcMain.on('install', function (event, arg) {
-    var data = [];
-    var zipfile = path.basename(new URL(arg).pathname);
-    var content = "";
+    console.log(os.type());
 
-    var request = https.get(url.parse(arg), function (response) {
-        response.on('data', (chunk) => {
-            data.push(chunk);
-        });
-
-        response.on('end', function () {
-
-            function expand(dir, zip) {
-
-                return new Promise(async (accept, reject) => {
-
-                    function createDir(dir) {
-
-                        return new Promise(async (accept, reject) => {
-
-                            fs.mkdirSync(dir, {
-                                recursive: true
-                            }, (err) => {
-                                if (err) {
-                                    reject(dir);
-                                    return;
-                                } else {
-                                    accept(dir)
-                                }
-                            });
-
-                        })
-
-                    }
-
-                    const files = zip.folder("/");
-
-                    console.log(files);
-
-                    zip.forEach(async function (relativePath, zipEntry) {
-                        var dest = path.join(dir, zipEntry.name);
-
-
-                        if (zipEntry.dir) {
-                            console.log("Dir:", zipEntry.name);
-
-                            await createDir(dest);
-                        } else {
-                            var content = await zip.file(zipEntry.name).async("nodebuffer");
-                            console.log("Writing:", zipEntry.name);
-
-                            fs.writeFileSync(dest, content);
-                        }
-
-                    });
-
-                    accept("complete");
-
-                });
-
-            }
-
-            var buffer = Buffer.concat(data);
-
-            JSZip.loadAsync(buffer).then(async function (zip) {
-                var dir = path.join(__dirname, PACKAGES);
-
-                fs.mkdirSync(dir, {
-                    recursive: true
-                }, (err) => {
-                    if (err) {
-                        event.sender.send('install-complete', err);
-                        console.log("error occurred in creating 'packages'directory", err);
-                        return;
-                    }
-                });
-
-                fs.writeFile(path.join(dir, zipfile), buffer, "binary", function (err) {
-
-                    if (err) {
-                        console.log(err);
-                    }
-
-                });
-
-                event.sender.send('install-complete', 'ok');
-
-                await expand(dir, zip);
-
-            }).then(function (text) { });
-
-        });
-
-    }).on('error', function (err) {
-        console.log(err.message);
-        event.sender.send('retrieve-complete', err.message);
+    var result = await dialog.showOpenDialogSync(os.type() != 'Darwin' ? {
+        properties: ['createDirectory'],
+        filters: [
+            { name: 'zip', extensions: ['zip'] },
+            { name: 'All Files', extensions: ['*'] }
+        ]
+    } : {
+        properties: ['openFile', 'openDirectory', 'createDirectory'],
+        filters: [
+            { name: 'zip', extensions: ['zip'] },
+            { name: 'All Files', extensions: ['*'] }
+        ]
     });
+
+    for(const filename of result) {
+        var status = await installPackage(filename);
+
+        var dir = path.join(__dirname, PACKAGES);
+
+        var manifest = await readZip(path.basename(filename), filename)
+
+        console.log("Unzipping: ", path.basename(filename), filename);
+
+        fs.createReadStream(filename)
+            .pipe(unzipper.Extract({ path: path.join(__dirname, CACHE, path.basename(filename).replace(".zip", "")) }));
+
+        event.sender.send('install-complete', JSON.stringify(manifest));
+    }
 
 });
 
 ipcMain.on('load', async function (event, arg) {
     function sleep(ms) {
         return new Promise((resolve) => {
-          setTimeout(resolve, ms);
+            setTimeout(resolve, ms);
         });
-      }
-
-    function processZip(data) {
-
-        return new Promise(async (accept, reject) => {
-            var zip = new JSZip();
-            var manifest = {};
-
-            zip.loadAsync(data).then(async function (zip) {
-
-                var files = zip.filter(function (relativePath, file) {
-                    return relativePath.endsWith(".manifest/manifest.json");
-                });
-
-                var content = await files[0].async("string");
-
-                manifest = JSON.parse(content);
-
-            }).then(function () {
-                accept(manifest);
-            });
-
-        });
-
     }
 
-    
-    fs.rmSync( path.join(__dirname, CACHE), { recursive: true, force: true });
+    fs.rmSync(path.join(__dirname, CACHE), { recursive: true, force: true });
 
     var dir = path.join(__dirname, PACKAGES);
 
@@ -210,40 +224,14 @@ ipcMain.on('load', async function (event, arg) {
 
     var manifests = [];
 
-
     for (const file of files) {
-        function readZip(filename) {
-            return new Promise(async (accept, reject) => {
-
-                fs.readFile(filename, async function (err, data) {
-
-                    if (err) {
-
-                        reject(err);
-                    }
-
-                    var manifest = await processZip(data);
-
-                    manifest["filename"] = filename;
-                    manifest["base"] = file.replace(".zip", "");
-                    manifest["url"] = path.join(CACHE, file.replace(".zip", ""), "index.html");
-                    manifest["manifest"] = path.join(CACHE, file.replace(".zip", ""), ".manifest");
-                    manifest["path"] = path.join(CACHE, file);
-
-                    accept(manifest);
-
-                });
-
-            });
-
-        }
 
         var filename = path.join(__dirname, PACKAGES, file);
 
         if (filename.endsWith(".zip")) {
             console.log("Loading: ", filename);
 
-            var manifest = await readZip(filename)
+            var manifest = await readZip(file, filename)
 
             manifests.push(manifest);
 

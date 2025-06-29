@@ -1,23 +1,8 @@
 .modal {
     font-size: 10px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    position: absolute;
-    /* Stay in place */
-    z-index: 1001;
-    /* Sit on top */
-    padding-top: 80px;
-    /* Location of the box */
-    left: 0px;
-    top: 0px;
-    right: 0px;
-    /* Full width */
-    bottom: 0px;
-    /* Full width */
-    overflow: auto;
-    /* Enable scroll if needed */
-    opacity: 0.4;
-    background-color: white;
-    /* Black w/ opacity */
+    margin-left:auto;
+    margin-right:auto;
 }
 
 /* Modal Dimmer */

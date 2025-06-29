@@ -31,7 +31,7 @@
                         </p>
                     </div>
                     <div style="margin-top:<%=display%>;">
-                        <img src="<%=display%>" style="display:block; <%=border%>; margin-left:auto; margin-right:auto; width:<%=width%>; height:<%=height%>;" </img>
+                        <img src="<%=display%>" style="display:block; <%=border%>; margin-left:auto; margin-right:auto; width:<%=width%>; height:<%=height%>;"> </img>
                     </div>
                     <div>
                         <p>
@@ -44,17 +44,17 @@
     </script>
 
     <script type="text/template" id="player">
-        <div class="model" id="player-dialog" style="display:inline-block">
-            <div style="position:absolute; padding:120px; top:-50px; bottom:0px; left:0px; right:0px; background: light-grey;">
-                <div class="modal-content" style="margin-top:10px; width:<%=width%>px; height:<%=height%>px;">
+        <div id="player-dialog" class="modal" style="display:inline-block; position:absolute;">
+            <div style="position:absolute; top:0px; bottom:0px; left:0px; right:0px">
+                <div class="modal-content" style="margin:10px; width:<%=width%>px; height:<%=height%>px;">
                     <div class="modal-header " style="background-color: black ">
-                        <span class="close" id="close" onclick="close_model_panel()">&times;</span>
+                        <span class="close" id="close" onclick="close_modal_panel()">&times;</span>
                         <h2 id="viewer-dialog_title">
                             <%=title%>
                         </h2>
                     </div>
                     <div class="modal-body" style="background: rgba(0,0,0,0.0.5); margin-top:8px; margin-left:auto; margin-right:auto; overflow:hidden;">
-                        <iframe id="player-viewer" src="<%=url%>" title="player" frameborder="0" width="<%=viewport-width%>" height="<%=viewport-height%>" style="transform:scale(<%=scale%>) translate(<%=translate-x%>px, <%=translate-y%>px);"></iframe>
+                        <iframe id="player-viewer" src="<%=url%>" title="player" frameborder="0" width="<%=viewport-width%>" height="<%=viewport-height%>" style="transform:scale(<%=scale%>); transform-origin:left top;"></iframe>
                     </div>
                 </div>
             </div>
@@ -94,7 +94,6 @@
                             </a>
                             <div class="dropdown-content">
                                 <a onclick="install()" title="Install">Install</a>
-                                <a onclick="load()" title="Load">Load</a>
                                 <a onclick="about()" title="About">About</a>
                             </div>
                         </li>
@@ -150,74 +149,11 @@
             </div>
         </div>
 
-        <div class="model" id="install-dialog" style="display:none">
-            <div style="position:absolute; padding:120px; top:0px; bottom:0px; left:0px; right:0px;">
-                <div class="modal-content" style="margin-top:40px; width:540px;">
-                    <div class="modal-header" style="background-color: black">
-                        <span class="close" id="close" onclick="close_model_panel()">&times;</span>
-                        <h2 id="dialog_title">Add a package</h2>
-                    </div>
-                    <div class="modal-body" id="text" style="background: rgba(0,0,0,0.0.5); height:150px;">
-                        <div id="getting_started_panel" class="modal-scroll-panel"
-                            style="position:absolute; top:50px; bottom:36px; left:0px; right:0px; overflow:auto; ">
-                            <table style="margin:5px;" cellpadding="10">
-                                <tr>
-                                    <td><label class="modal-label"></label>Package URL</td>
-                                    <td><input class="modal-entry" id="package-url" type="text" name="package-url"
-                                            placeholder="URL..." required></input>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                    <div style="padding: 10px; margin-left:10px;">
-                        <button class="modal-btn" id="install-package" onclick="install_package();">Install</button>
-                        <button class="modal-cancel-btn" id="cancel-install"
-                            onclick="close_model_panel();">Cancel</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="model" id="load-dialog" style="display:none">
-            <div style="position:absolute; padding:120px; top:0px; bottom:0px; left:0px; right:0px;">
-                <div class="modal-content" style="margin-top:40px; width:540px;">
-                    <div class="modal-header" style="background-color: black">
-                        <span class="close" id="close" onclick="close_model_panel()">&times;</span>
-                        <h2 id="dialog_title">Load a package</h2>
-                    </div>
-                    <div class="modal-body" id="text" style="background: rgba(0,0,0,0.0.5); height:150px;">
-                        <div id="getting_started_panel" class="modal-scroll-panel"
-                            style="position:absolute; top:50px; bottom:36px; left:0px; right:0px; overflow:auto; ">
-                            <table style="margin:5px;" cellpadding="10">
-                                <tr>
-                                    <td><label class="modal-label"></label>Package</td>
-                                    <td><input class="modal-entry" id="package-file-name" type="text"
-                                            name="package-file-name" placeholder="Package File Name..."
-                                            required readonly></input>
-                                    </td>
-                                    <td><input id="select-package" type="button" value="..."
-                                            name="package-file-name">
-                                        </input>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                    <div style="padding: 10px; margin-left:10px;">
-                        <button class="modal-btn-disabled" id="upload-package" onclick="upload_package();" disabled>Install</button>
-                        <button class="modal-cancel-btn" id="cancel-install"
-                            onclick="close_model_panel();">Cancel</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="model" id="about-dialog" style="display:none">
+        <div class="modal" id="about-dialog" style="display:none">
             <div style="position:absolute; padding:120px; top:0px; bottom:0px; left:0px; right:0px;">
                 <div class="modal-content" style="margin-top:40px; width:440px;">
                     <div class="modal-header" style="background-color: black">
-                        <span class="close" id="close" onclick="close_model_panel()">&times;</span>
+                        <span class="close" id="close" onclick="close_modal_panel()">&times;</span>
                         <h2 id="dialog_title">About</h2>
                     </div>
                     <div class="modal-body" id="text" style="background: rgba(0,0,0,0.0.5); height:150px;">
