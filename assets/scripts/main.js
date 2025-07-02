@@ -26,23 +26,6 @@ function install() {
 
 }
 
-window.api.on('install-complete', (channel, args) => {
-
-    var manifest = JSON.parse(args);
-
-    manifests.push(manifest);
-    
-    display(manifest, manifests.length, "details");
-
-    var cards = document.getElementsByClassName('card');
-
-    for (let card = 0; card < cards.length; card++) {
-        cards[card].style.borderBottom = "3px solid white";
-    }
-
-});
-
-
 function about() {
     document.getElementById('about-dialog').style.display = "inline-block";
 }
@@ -88,9 +71,9 @@ function play(name, url, height, width, scale) {
 
     document.getElementById('viewer').innerHTML = html;
 
-    var top = (window.innerHeight/2) - (adjustedHeight/2) - 40;
-    document.getElementById('player-dialog').style.top =  `${top < 40 ? 0 : top}px`
-    document.getElementById('player-dialog').style.left = `${(window.innerWidth/2) - (adjustedWidth/2)}px`;
+    var top = (window.innerHeight / 2) - (adjustedHeight / 2) - 40;
+    document.getElementById('player-dialog').style.top = `${top < 40 ? 0 : top}px`
+    document.getElementById('player-dialog').style.left = `${(window.innerWidth / 2) - (adjustedWidth / 2)}px`;
 
     document.getElementById('player-viewer').focus();
 
@@ -108,40 +91,45 @@ function display(manifest, id, callback) {
         replace(/<%=label%>/g, manifest.label).
         replace(/<%=view%>/g, view);
 
-    var card = document.getElementById(view);
+    var cards = document.getElementById(view);
 
-    card.innerHTML += cardValue;
+    cards.innerHTML += cardValue;
 
 }
 
 function viewDetails(id, view) {
     var element = document.getElementById("view");
     var template = element.text;
-    var entry = parseInt(id);
-    var repository = manifests[entry];
+
+    var entry = manifests.find((manifest) => {
+
+        return manifest.id == id;
+
+    });
+
     var description = "";
 
-    for (var line in manifests[entry].description) {
-        description += manifests[entry].description[line];
+    for (var line in entry.description) {
+        description += entry.description[line];
     }
 
-    var html = template.replace(/<%=name%>/g, manifests[entry].label).
+    var html = template.replace(/<%=name%>/g, entry.label).
         replace(/<%=description%>/g, description);
 
-    if ('display' in manifests[entry]) {
-        html = html.replace(/<%=display%>/g, manifests[entry].manifest + "/" +
-            manifests[entry].display.image);
-        html = html.replace(/<%=width%>/g, manifests[entry].display.width);
-        html = html.replace(/<%=height%>/g, manifests[entry].display.height);
-        html = html.replace(/<%=border%>/g, manifests[entry].display.border);
-        html = html.replace(/<%=margin%>/g, manifests[entry].display.margin);
+    if ('display' in entry) {
+        html = html.replace(/<%=display%>/g, entry.manifest + "/" +
+            entry.display.image);
+        html = html.replace(/<%=width%>/g, entry.display.width);
+        html = html.replace(/<%=height%>/g, entry.display.height);
+        html = html.replace(/<%=border%>/g, entry.display.border);
+        html = html.replace(/<%=margin%>/g, entry.display.margin);
     }
 
     var notes = "";
 
-    if ('notes' in manifests[entry]) {
-        for (var note in manifests[entry].notes) {
-            notes += manifests[entry].notes[note];
+    if ('notes' in entry) {
+        for (var note in entry.notes) {
+            notes += entry.notes[note];
         }
 
     }
@@ -164,25 +152,26 @@ function viewDetails(id, view) {
     document.getElementById("actions").style.display = "inline-block";
 
     var play = document.getElementById("play");
-    var url = manifests[entry]['url'].replaceAll("\\", "\\\\");
+    var url = entry['url'].replaceAll("\\", "\\\\");
 
-    play.href = `javascript:play("${manifests[entry]['label']}", ` +
+    play.href = `javascript:play("${entry['label']}", ` +
         `"${url}", ` +
-        `"${manifests[entry]['play']['size']['height']}", ` +
-        `"${manifests[entry]['play']['size']['width']}", ` +
-        `"${manifests[entry]['play']['scale']}")`;
+        `"${entry['play']['size']['height']}", ` +
+        `"${entry['play']['size']['width']}", ` +
+        `"${entry['play']['scale']}")`;
 }
 
 function playGame(id, view) {
-    var entry = parseInt(id);
-    var repository = manifests[entry];
+    var entry = manifests.find((manifest) => {
+        return manifest.id == id;
+    });
 
-    var url = manifests[entry]['url'].replaceAll("\\", "\\\\");
+    var url = entry['url'].replaceAll("\\", "\\\\");
 
-    play(manifests[entry]['label'],
-        url, manifests[entry]['play']['size']['height'],
-        manifests[entry]['play']['size']['width'],
-        manifests[entry]['play']['scale']);
+    play(entry['label'],
+        url, entry['play']['size']['height'],
+        entry['play']['size']['width'],
+        entry['play']['scale']);
 
 }
 
@@ -217,10 +206,41 @@ window.api.on('load-complete', (channel, args) => {
     manifests = JSON.parse(args);
 
     for (var manifest in manifests) {
+        manifests[manifest]["id"] = manifest;
+
         display(manifests[manifest], manifest, "details");
     }
 
     document.getElementById(window.activeCards).style.display = "inline-block";
+
+    var cards = document.getElementsByClassName('card');
+
+    for (let card = 0; card < cards.length; card++) {
+        cards[card].style.borderBottom = "3px solid white";
+    }
+
+});
+
+window.api.on('install-complete', (channel, args) => {
+    var definition = JSON.parse(args);
+
+    manifests = manifests.filter((manifest, index) => {
+
+        if (manifest.label == definition.label) {
+            var card = document.getElementById(`card-${categories[manifest.category].view}-${manifest.id}`);
+
+            card.parentNode.removeChild(card);
+            definition.id = manifest.id;
+
+        }
+
+        return manifest.label != definition.label;
+
+    });
+
+    manifests.push(definition);
+
+    display(definition, definition.id, "details");
 
     var cards = document.getElementsByClassName('card');
 
