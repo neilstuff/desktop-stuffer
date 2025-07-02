@@ -224,6 +224,8 @@ window.api.on('load-complete', (channel, args) => {
 window.api.on('install-complete', (channel, args) => {
     var definition = JSON.parse(args);
 
+    definition.id = manifests.length;
+
     manifests = manifests.filter((manifest, index) => {
 
         if (manifest.label == definition.label) {
