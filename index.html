@@ -66,6 +66,43 @@
 </head>
 
 <body style=" overflow:hidden">
+    <dialog id="compile-dialog" class="dialog" style="min-width:600px; height:200px;">
+        <div style="position:absolute; top:20px; left:10px; width:80px;">
+            <img src="assets/images/compile.svg" width="64" height="64" style="float: left; margin-right:10px;" />
+        </div>
+       
+        <div style="position:absolute; top:10px; left:100px; right:10px">
+             <div style="position:absolute; top:0; ">
+                <p style="font-size: 18px; font-weight: bold;">Enter Pacakge Details</p>
+            </div>
+            <div style="position:absolute; top:50px; left:0px; right:0px;">
+                <input class="modal-entry" id="ldap-url" style="position:absolute; left:0px; right:10px" type="text"
+                    name="ldap-url" placeholder="package-name">
+                </input>
+            </div>
+            <div style="position:absolute; top:80px; left:0px; right:0px;">
+                <input class="modal-entry" id="ldap-password" style="position:absolute; left:0px; right:10px"
+                    name="ldap-url" placeholder="password">
+                </input>
+            </div>
+        </div>    
+
+        <div style="position:absolute; bottom:10px; left:10px; right:10px;">
+            <div id="compile-message"
+                style="color:rgba(255,0,0,0.6); width:300px; float:left; font-size: 12px; margin-top:8px;"></div>
+
+            <button id="load-compile-dialog" class="message-dialog-small-button"
+                style="float:right; margin-top:10px; margin-left:10px;">Load</button>
+           
+                <button id="ok-compile-dialog" class="message-dialog-small-button"
+                style="float:right; margin-top:10px; margin-left:10px;">Compile</button>
+
+            <button id="cancel-compile-dialog" class="close-button message-dialog-small-cancel-button"
+                style="float:right; margin-top:10px;">Cancel</button>
+        </div>
+
+    </dialog>
+    
     <div id="splash-page" style="width:100%; height:100%;">
         <img id="logo" src="assets/images/logo.svg"
             style="width:400px; height:400px; display:block; margin-top:15%; margin-left:auto; margin-right:auto;"></img>
@@ -94,6 +131,7 @@
                             </a>
                             <div class="dropdown-content">
                                 <a onclick="install()" title="Install">Install</a>
+                                <a onclick="compile()" title="Compile">Compile</a>
                                 <a onclick="about()" title="About">About</a>
                             </div>
                         </li>

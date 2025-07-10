@@ -26,10 +26,15 @@ function install() {
 
 }
 
+function compile() {
+
+    document.getElementById("compile-dialog").showModal();
+
+}
+
 function about() {
     document.getElementById('about-dialog').style.display = "inline-block";
 }
-
 
 function close_modal_panel() {
     var dialogs = document.getElementsByClassName('modal')
@@ -193,6 +198,11 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
     document.addEventListener('dragover', event => event.preventDefault());
     document.addEventListener('drop', event => event.preventDefault());
+
+    document.getElementById("cancel-compile-dialog").addEventListener('click', async (e) => {
+        document.getElementById("compile-dialog").close();
+
+    });
 
     window.api.load();
 
