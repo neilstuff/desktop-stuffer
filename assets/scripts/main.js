@@ -46,6 +46,8 @@ function close_modal_panel() {
 
     }
 
+    document.getElementById("compile-dialog").close();
+
     document.getElementById('viewer').innerHTML = "<html></html>";
 
 }

@@ -66,41 +66,88 @@
 </head>
 
 <body style=" overflow:hidden">
-    <dialog id="compile-dialog" class="dialog" style="min-width:600px; height:200px;">
-        <div style="position:absolute; top:20px; left:10px; width:80px;">
-            <img src="assets/images/compile.svg" width="64" height="64" style="float: left; margin-right:10px;" />
+    <dialog id="compile-dialog" class="dialog" style="min-width:510px; height:620px; overflow: hidden;">
+        <div style="margin:-16px;">
+            <div class="modal-header" style="background-color: black">
+                <span class="close" id="close" onclick="close_modal_panel()">&times;</span>
+                <h2 id="dialog_title">Compile</h2>
+            </div>
+
+            <div style="position:absolute; top:60px; left:10px; width:80px;">
+                <img src="assets/images/compile.svg" width="64" height="64" style="float: left; margin-right:10px;" />
+            </div>
+        
+            <div style="position:absolute; top:35px; left:100px; right:150px;">
+                <div style="position:absolute; top:0; ">
+                    <p class="modal-h1" style="font-size: 18px; font-weight: bold;">Enter Package Details</p>
+                </div>
+                <div style="position:absolute; top:50px; left:0px; right:40px;">
+                    <input class="modal-entry" id="package-name" style="position:absolute; left:0px; width:120px;" type="text"
+                        name="package-name" placeholder="package name">
+                    </input>
+                </div>
+                <div style="position:absolute; top:55px; width:80px; right:72px; height:14px;">
+                    <input type="text" name="package-type" list="package-types" style="font-size: 12px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+                        <datalist id="package-types" style="font-size: 12px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+                            <option value="Game">  
+                            <option value="App">
+                            <option value="Util">
+                        </datalist>
+                    </input>
+
+                </div>
+                <div style="position:absolute; top:90px; left:0px; right:5px;">
+                    <textarea id="description" name="description" placeholder="package description" class="modal-text" id="package-description" 
+                             style="position:absolute; left:0px; right:10px; height:60px;"
+                        name="package-description"></textarea>
+                </div>
+                <div style="position:absolute; top:170px; left:0px; right:5px;">
+                    <textarea id="package-notes" name="notes" placeholder="package notes" class="modal-text" id="package-notes" 
+                             style="position:absolute; left:0px; right:10px; height:60px;"
+                        name="package-dnotes"></textarea>
+                </div>
+                <div id="package-banner" style="position:absolute; top:250px; left:0px; right:0px; height:200px; border:1px solid rgba(0, 0, 0, 0.2);"></div>
+                <div style="position:absolute; top:455px; left:0px; right:0px; height:30px;">
+                    <input type="range" id="width" name="width" min="0" max="100" value="100" style="position:absolute; left:0px; right:0px;"></input>
+                </div>   
+             
+                <div style="position:absolute; top:500px; left:0px; right:40px;">
+                    <input class="modal-entry" id="package-index" style="position:absolute; top:0px; left:0px; width:400px;" type="text"
+                        name="package-index" placeholder="index.html">
+                    </input>
+                    <input class="modal-entry" id="package-display-width" style="position:absolute; top:24px; left:0px; width:50px;" min="100" max="1000" type="number"
+                        name="package-diplay-width" placeholder="width">
+                    </input>
+                    <input class="modal-entry" id="package-display-width" style="position:absolute; top:24px; left:70px; width:50px;" min="100" max="1000" type="number"
+                        name="package-diplay-height" placeholder="height">
+                    </input>
+                    <input class="modal-entry" id="package-display-scale" style="position:absolute; top:24px; left:140px; width:50px;" min="0" max="100" type="number"
+                        name="package-diplay-scale" placeholder="height">
+                    </input>
+                </div>
+            </div>   
+
+            <div style="position:absolute; top:130px; left:296px; width:220px; height:400px;">
+                <input type="range" id="width" name="width" min="0" max="100" value="100" style="position:absolute; top: 0px; width:210px; height:100%;" class="vranger"></input>
+            </div> 
+
+            <div id="package-icon" style="position:absolute; top:60px; width:80px; right:10px; height:80px; border:1px solid rgba(0, 0, 0, 0.2);">
+            </div>
+
+            <div style="position:absolute; bottom:10px; left:10px; right:10px;">
+                <div id="compile-message"
+                    style="color:rgba(255,0,0,0.6); width:300px; float:left; font-size: 12px; margin-top:8px;"></div>
+
+                <button id="load-compile-dialog" class="message-dialog-small-button"
+                    style="float:right; margin-top:10px; margin-left:10px;">Load</button>
+            
+                    <button id="ok-compile-dialog" class="message-dialog-small-button"
+                    style="float:right; margin-top:10px; margin-left:10px;">Compile</button>
+
+                <button id="cancel-compile-dialog" class="close-button message-dialog-small-cancel-button"
+                    style="float:right; margin-top:10px;">Cancel</button>
+            </div>
         </div>
-       
-        <div style="position:absolute; top:10px; left:100px; right:10px">
-             <div style="position:absolute; top:0; ">
-                <p style="font-size: 18px; font-weight: bold;">Enter Pacakge Details</p>
-            </div>
-            <div style="position:absolute; top:50px; left:0px; right:0px;">
-                <input class="modal-entry" id="ldap-url" style="position:absolute; left:0px; right:10px" type="text"
-                    name="ldap-url" placeholder="package-name">
-                </input>
-            </div>
-            <div style="position:absolute; top:80px; left:0px; right:0px;">
-                <input class="modal-entry" id="ldap-password" style="position:absolute; left:0px; right:10px"
-                    name="ldap-url" placeholder="password">
-                </input>
-            </div>
-        </div>    
-
-        <div style="position:absolute; bottom:10px; left:10px; right:10px;">
-            <div id="compile-message"
-                style="color:rgba(255,0,0,0.6); width:300px; float:left; font-size: 12px; margin-top:8px;"></div>
-
-            <button id="load-compile-dialog" class="message-dialog-small-button"
-                style="float:right; margin-top:10px; margin-left:10px;">Load</button>
-           
-                <button id="ok-compile-dialog" class="message-dialog-small-button"
-                style="float:right; margin-top:10px; margin-left:10px;">Compile</button>
-
-            <button id="cancel-compile-dialog" class="close-button message-dialog-small-cancel-button"
-                style="float:right; margin-top:10px;">Cancel</button>
-        </div>
-
     </dialog>
     
     <div id="splash-page" style="width:100%; height:100%;">
