@@ -11,6 +11,12 @@ contextBridge.exposeInMainWorld(
         load: () => {
             return ipcRenderer.send('load');
         },
+        upload: () => {
+            return ipcRenderer.send('upload');
+        },
+        compile: () => {
+            return ipcRenderer.send('compile');
+        },
         install: () => {
             return ipcRenderer.send('install');
         },

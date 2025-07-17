@@ -208,6 +208,15 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
     window.api.load();
 
+    document.getElementById("load-upload-dialog").addEventListener('click', async (e) => {
+        window.api.upload();
+    });
+
+
+    document.getElementById("ok-compile-dialog").addEventListener('click', async (e) => {
+
+    });
+
 });
 
 window.api.on('load-complete', (channel, args) => {

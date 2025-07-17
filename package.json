@@ -39,7 +39,7 @@
     "devDependencies": {
         "electron": "^19.0.4",
         "electron-builder": "^23.0.3",
-        "node": "^17.7.2"
+        "node": "^20.19.4"
     },
     "bugs": {
         "url": "https://github.com/thesourorange/neilstuff/desktop-stuffer"

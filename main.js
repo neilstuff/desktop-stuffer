@@ -192,7 +192,7 @@ ipcMain.on('install', async function (event) {
         ]
     });
 
-    for(const filename of result) {
+    for (const filename of result) {
         var status = await installPackage(filename);
 
         var dir = path.join(__dirname, PACKAGES);
@@ -256,3 +256,44 @@ ipcMain.on('load', async function (event, arg) {
     event.sender.send('load-complete', JSON.stringify(manifests));
 
 });
+
+ipcMain.on('upload', async function (event, arg) {
+    var selectedPaths = await dialog.showOpenDialogSync(os.type() != 'Darwin' ? {
+        properties: ['openDirectory', 'createDirectory']
+    } : {
+        properties: ['openDirectory', 'createDirectory']
+
+    });
+
+    if (selectedPaths) {
+        console.log('Selected directory:', selectedPaths[0]);
+
+        var walk = function (dir) {
+            var results = [];
+            var list = fs.readdirSync(dir);
+            list.forEach(function (file) {
+                file = dir + '/' + file;
+                var stat = fs.statSync(file);
+                if (stat && stat.isDirectory()) {
+                    results = results.concat(walk(file));
+                } else {
+                    results.push(file);
+                }
+            });
+
+            return results;
+        }
+
+        var files = walk(selectedPaths[0]);
+
+        console.log(files);
+
+    } else {
+        console.log('No directory selected.');
+    }
+
+});
+
+ipcMain.on('compile', async function (event, arg) {
+});
+
