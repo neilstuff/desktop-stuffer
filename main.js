@@ -271,17 +271,37 @@ ipcMain.on('upload', async function (event, arg) {
         var walk = function (dir) {
             var results = [];
             var list = fs.readdirSync(dir);
-            list.forEach(function (file) {
-                file = dir + '/' + file;
-                var stat = fs.statSync(file);
+            list.forEach(async function (file) {
+                var path = dir + '/' + file;
+                var stat = fs.statSync(path);
+
                 if (stat && stat.isDirectory()) {
-                    results = results.concat(walk(file));
+                    results.push({
+                        "directory": file,
+                        "path": path
+                    });
+                    results = results.concat(walk(path));
                 } else {
-                    results.push(file);
+                    if (file == "manifest.json") {
+                        const manifest = fs.readFileSync(path, "utf8");
+                        results.push({
+                            "file": file,
+                            "path": path,
+                            "manifest": JSON.parse(manifest)
+                        });
+                    } else {
+                        results.push({
+                            "file": file,
+                            "path": path
+                        });
+                    }
                 }
+
+
             });
 
             return results;
+
         }
 
         var files = walk(selectedPaths[0]);
