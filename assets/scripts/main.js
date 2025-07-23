@@ -273,6 +273,12 @@ window.api.on('install-complete', (channel, args) => {
 
 });
 
+window.api.on('upload-complete', (channel, args) => {
+});
+
+window.api.on('upload-exception', (channel, args) => {
+});
+
 window.setTimeout(function () {
     document.getElementById("splash-page").classList.toggle("hidden");
 

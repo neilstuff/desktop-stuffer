@@ -23,6 +23,21 @@ var mainWindow = null;
 const PACKAGES = "packages"
 const CACHE = ".cache"
 
+function encodeBase64(filename) {
+
+    fs.readFile(path.join(__dirname, filename), function (error, data) {
+        if (error) {
+            throw error;
+        } else {
+            console.log(data);
+            var dataBase64 = data.toString('base64');
+            console.log(dataBase64);
+            client.write(dataBase64);
+        }
+    });
+
+}
+
 function installPackage(filename) {
 
     return new Promise(async (accept, reject) => {
@@ -258,6 +273,7 @@ ipcMain.on('load', async function (event, arg) {
 });
 
 ipcMain.on('upload', async function (event, arg) {
+
     var selectedPaths = await dialog.showOpenDialogSync(os.type() != 'Darwin' ? {
         properties: ['openDirectory', 'createDirectory']
     } : {
@@ -267,10 +283,14 @@ ipcMain.on('upload', async function (event, arg) {
 
     if (selectedPaths) {
         console.log('Selected directory:', selectedPaths[0]);
+        var iconFile = null;
+        var bannerFile = null;
+        var manifestPath = null;
 
         var walk = function (dir) {
             var results = [];
             var list = fs.readdirSync(dir);
+
             list.forEach(async function (file) {
                 var path = dir + '/' + file;
                 var stat = fs.statSync(path);
@@ -280,17 +300,32 @@ ipcMain.on('upload', async function (event, arg) {
                         "directory": file,
                         "path": path
                     });
+
+                    if (file.endsWith(".manifest")) {
+                        manifestPath = path;
+                    }
+
                     results = results.concat(walk(path));
+                    
                 } else {
                     if (file == "manifest.json") {
                         const manifest = fs.readFileSync(path, "utf8");
                         results.push({
+                            "directory": dir,
                             "file": file,
                             "path": path,
                             "manifest": JSON.parse(manifest)
                         });
+
+                        var context = JSON.parse(manifest);
+
+                        iconFile = context["image"];
+                        bannerFile = context["display"]["image"];
+
+
                     } else {
                         results.push({
+                            "directory": dir,
                             "file": file,
                             "path": path
                         });
@@ -306,11 +341,22 @@ ipcMain.on('upload', async function (event, arg) {
 
         var files = walk(selectedPaths[0]);
 
-        console.log(files);
+        console.log(JSON.stringify(files));
+
+        console.log(`Manifest Path: ${manifestPath}`);
+        console.log(`Icon File: ${iconFile}`);
+        console.log(`Banner File: ${bannerFile}`);
+
+        
+        event.sender.send('upload-complete', files);
 
     } else {
         console.log('No directory selected.');
+        
+        event.sender.send('upload-exception', 'No directory selected.');
+
     }
+
 
 });
 
