@@ -4,7 +4,6 @@ const config = require('./config.json');
 
 const electron = require('electron');
 const { app } = electron;
-const { protocol } = electron;
 const { ipcMain } = electron;
 const { dialog } = electron;
 
@@ -24,16 +23,16 @@ const PACKAGES = "packages"
 const CACHE = ".cache"
 
 function encodeBase64(filename) {
+    return new Promise(async (accept, reject) => {
+        fs.readFile(filename, function (error, data) {
+            if (error) {
+                reject(error);
+            } else {
+                var dataBase64 = data.toString('base64');
+                 accept(dataBase64);
+            }
+        });
 
-    fs.readFile(path.join(__dirname, filename), function (error, data) {
-        if (error) {
-            throw error;
-        } else {
-            console.log(data);
-            var dataBase64 = data.toString('base64');
-            console.log(dataBase64);
-            client.write(dataBase64);
-        }
     });
 
 }
@@ -286,6 +285,7 @@ ipcMain.on('upload', async function (event, arg) {
         var iconFile = null;
         var bannerFile = null;
         var manifestPath = null;
+        var context = null;
 
         var walk = function (dir) {
             var results = [];
@@ -306,32 +306,32 @@ ipcMain.on('upload', async function (event, arg) {
                     }
 
                     results = results.concat(walk(path));
-                    
+
                 } else {
                     if (file == "manifest.json") {
+                        console.log("Before Manifest");
+
                         const manifest = fs.readFileSync(path, "utf8");
-                        results.push({
+
+                        context = {
                             "directory": dir,
                             "file": file,
                             "path": path,
                             "manifest": JSON.parse(manifest)
-                        });
+                        };
 
-                        var context = JSON.parse(manifest);
+                        iconFile = context.manifest["image"];
+                        bannerFile = context.manifest["display"]["image"];
 
-                        iconFile = context["image"];
-                        bannerFile = context["display"]["image"];
-
-
-                    } else {
-                        results.push({
-                            "directory": dir,
-                            "file": file,
-                            "path": path
-                        });
                     }
-                }
 
+                    results.push({
+                        "directory": dir,
+                        "file": file,
+                        "path": path,
+                    });
+
+                }
 
             });
 
@@ -341,19 +341,35 @@ ipcMain.on('upload', async function (event, arg) {
 
         var files = walk(selectedPaths[0]);
 
-        console.log(JSON.stringify(files));
+        try {
+            console.log(`Manifest Path: ${manifestPath}`);
+            console.log(`Icon File: ${iconFile}`);
+            console.log(`Banner File: ${bannerFile}`);
 
-        console.log(`Manifest Path: ${manifestPath}`);
-        console.log(`Icon File: ${iconFile}`);
-        console.log(`Banner File: ${bannerFile}`);
+            var icon = await encodeBase64(path.join(manifestPath, iconFile));
+            var banner = await encodeBase64(path.join(manifestPath, bannerFile));
 
-        
-        event.sender.send('upload-complete', files);
+            icon = `data:image/png;base64,${icon}`;
+            banner = `data:image/png;base64,${banner}`;
+
+            event.sender.send('upload-complete', JSON.stringify({
+                "files": files,
+                "manifest": context,
+                "icon": icon,
+                "banner": banner
+            }));
+
+        } catch (e) {
+            console.log(e);
+
+            event.sender.send('upload-exception', e);
+
+        }
 
     } else {
         console.log('No directory selected.');
-        
-        event.sender.send('upload-exception', 'No directory selected.');
+
+        event.sender.send('upload-exception', 'No directory selected');
 
     }
 

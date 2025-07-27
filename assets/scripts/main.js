@@ -274,9 +274,28 @@ window.api.on('install-complete', (channel, args) => {
 });
 
 window.api.on('upload-complete', (channel, args) => {
+    var package = JSON.parse(args);
+    console.log(package);
+    var nodeUtil = new NodeUtil(document);
+    var manifest = package.manifest.manifest;
+
+    console.log(manifest["label"]);
+
+    nodeUtil.setFields(
+    {
+        "name": "package-name",
+        "value": manifest["label"]
+    });
+
+    console.log(package.icon)
+    var iconImage = nodeUtil.createImageNode(package.icon);
+
 });
 
 window.api.on('upload-exception', (channel, args) => {
+
+    alert('upload-exception');
+
 });
 
 window.setTimeout(function () {
