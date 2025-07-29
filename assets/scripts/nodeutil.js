@@ -32,7 +32,9 @@ NodeUtil.prototype.setFields = function (...fields) {
    for (const field in fields) {
     console.log("field.name: " + fields[field].name + " : " + fields[field].value);
 
-    var element =  this._document.getElementById(fields[field].name);
+    var element = this._document.getElementById(fields[field].name);
+
+    console.log(element);
 
     element.value = fields[field].value;
 

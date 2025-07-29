@@ -280,12 +280,21 @@ window.api.on('upload-complete', (channel, args) => {
     var manifest = package.manifest.manifest;
 
     console.log(manifest["label"]);
-
+    console.log(manifest["description"]);
     nodeUtil.setFields(
-    {
-        "name": "package-name",
-        "value": manifest["label"]
-    });
+        {
+            "name": "package-name",
+            "value": manifest["label"]
+        },
+        {
+            "name": "package-description",
+            "value": manifest["description"]
+        },
+        {
+            "name": "package-notes",
+            "value": manifest["notes"]
+        }
+    );
 
     console.log(package.icon)
     var iconImage = nodeUtil.createImageNode(package.icon);
