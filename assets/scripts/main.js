@@ -293,7 +293,24 @@ window.api.on('upload-complete', (channel, args) => {
         {
             "name": "package-notes",
             "value": manifest["notes"]
-        }
+        },
+        {
+            "name": "package-index",
+            "value": manifest["play"]["index"]
+        },
+        {
+            "name": "package-display-width",
+            "value": manifest["play"]["size"]["width"]
+        },
+        {
+            "name": "package-display-height",
+            "value": manifest["play"]["size"]["height"]
+        },
+        {
+            "name": "package-diplay-scale",
+            "value": manifest["play"]["scale"]
+        },
+
     );
 
     console.log(package.icon)
