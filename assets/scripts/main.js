@@ -215,6 +215,11 @@ document.addEventListener("DOMContentLoaded", (event) => {
     document.getElementById("ok-compile-dialog").addEventListener('click', async (e) => {
     });
 
+    document.getElementById("banner-width").addEventListener('input', async (e) => {
+    });
+
+    document.getElementById("banner-height").addEventListener('input', async (e) => {
+    });
 
     document.getElementById("banner-width").addEventListener('change', async (e) => {
     });
