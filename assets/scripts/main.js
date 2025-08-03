@@ -212,9 +212,14 @@ document.addEventListener("DOMContentLoaded", (event) => {
         window.api.upload();
     });
 
-
     document.getElementById("ok-compile-dialog").addEventListener('click', async (e) => {
+    });
 
+
+    document.getElementById("banner-width").addEventListener('change', async (e) => {
+    });
+
+    document.getElementById("banner-height").addEventListener('change', async (e) => {
     });
 
 });
@@ -279,12 +284,17 @@ window.api.on('upload-complete', (channel, args) => {
     var nodeUtil = new NodeUtil(document);
     var manifest = package.manifest.manifest;
 
-    console.log(manifest["label"]);
-    console.log(manifest["description"]);
+    var width = manifest["display"]["width"].replace("%", "");
+    var height = manifest["display"]["height"].replace("%", "");
+
     nodeUtil.setFields(
         {
             "name": "package-name",
             "value": manifest["label"]
+        },
+        {
+            "name": "package-category",
+            "value": manifest["category"]
         },
         {
             "name": "package-description",
@@ -307,14 +317,41 @@ window.api.on('upload-complete', (channel, args) => {
             "value": manifest["play"]["size"]["height"]
         },
         {
-            "name": "package-diplay-scale",
+            "name": "package-display-scale",
             "value": manifest["play"]["scale"]
         },
+        {
+            "name": "package-display-scale",
+            "value": manifest["play"]["scale"]
+        },
+        {
+            "name": "banner-width",
+            "value": width
+        },
+        {
+            "name": "banner-height",
+            "value": height
+        }
 
     );
 
     console.log(package.icon)
+    
     var iconImage = nodeUtil.createImageNode(package.icon);
+    
+    iconImage.style.height = "64px";
+    iconImage.style.width = "64px";
+
+    nodeUtil.prune(document.getElementById("package-icon"));
+    document.getElementById("package-icon").appendChild(iconImage);
+
+    var bannerImage = nodeUtil.createImageNode(package.banner);
+    
+    bannerImage.style.height = `${height}%`;
+    bannerImage.style.width = `${width}%`;
+
+    nodeUtil.prune(document.getElementById("package-banner"));
+    document.getElementById("package-banner").appendChild(bannerImage);
 
 });
 
