@@ -87,7 +87,6 @@ function play(name, url, height, width, scale) {
 }
 
 function display(manifest, id, callback) {
-
     var element = document.getElementById("template");
     var template = element.text;
     var view = categories[manifest.category].view;
@@ -216,15 +215,20 @@ document.addEventListener("DOMContentLoaded", (event) => {
     });
 
     document.getElementById("banner-width").addEventListener('input', async (e) => {
+        var bannerImage = document.getElementById("banner-image");
+
+        bannerImage.style.width = `${document.getElementById("banner-width").value}%`;
+
     });
 
     document.getElementById("banner-height").addEventListener('input', async (e) => {
+        var bannerImage = document.getElementById("banner-image");
+
+        bannerImage.style.height = `${document.getElementById("banner-height").value}%`;
+
     });
 
     document.getElementById("banner-width").addEventListener('change', async (e) => {
-    });
-
-    document.getElementById("banner-height").addEventListener('change', async (e) => {
     });
 
 });
@@ -354,6 +358,7 @@ window.api.on('upload-complete', (channel, args) => {
     
     bannerImage.style.height = `${height}%`;
     bannerImage.style.width = `${width}%`;
+    bannerImage.id = "banner-image";
 
     nodeUtil.prune(document.getElementById("package-banner"));
     document.getElementById("package-banner").appendChild(bannerImage);
