@@ -5,7 +5,7 @@ function NodeUtil(document) {
 };
 
 NodeUtil.prototype.createImageNode = function (source) {
-    var image =  this._document.createElement("img");
+    var image = this._document.createElement("img");
 
     image.src = source;
 
@@ -15,26 +15,52 @@ NodeUtil.prototype.createImageNode = function (source) {
 
 NodeUtil.prototype.prune = function (node) {
 
-    node.replaceChildren(); 
+    node.replaceChildren();
 
 }
 
 NodeUtil.prototype.replace = function (node, ...children) {
 
-    node.replaceChildren(children); 
-    
+    node.replaceChildren(children);
+
 }
 
 NodeUtil.prototype.setFields = function (...fields) {
 
-   for (const field in fields) {
-    console.log("field.name: " + fields[field].name + " : " + fields[field].value);
+    for (const field in fields) {
+        console.log("field.name: " + fields[field].name + " : " + fields[field].value);
 
-    var element = this._document.getElementById(fields[field].name);
+        var element = this._document.getElementById(fields[field].name);
 
-    element.value = fields[field].value;
+        element.value = fields[field].value;
 
-   }
-    
+    }
+
 }
 
+NodeUtil.prototype.setCheckBoxes = function (name, ...values) {
+    var list = this._document.createElement("ul");
+
+    for (var value in values) {
+        var label = this._document.createElement("label");
+        label.value = values[value];
+        label.innerHTML = `<b>${values[value]}</b>`;
+        label.style.fontSize = "12px";
+
+        var checkbox = this._document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.name = label.value = values[value];
+        checkbox.id = `checkbox-${label.value = values[value]}`;
+        checkbox.className = name;
+        checkbox.style = marhinTop = "3px";
+        checkbox.value = values[value];
+        checkbox.checked = true;
+
+        label.appendChild(checkbox);
+        list.appendChild(label);
+
+    }
+
+    return list;
+
+}
