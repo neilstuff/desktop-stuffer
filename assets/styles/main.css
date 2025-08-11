@@ -421,6 +421,12 @@ kbd.key {
   -moz-transform: rotate(270deg);
 }
 
+.vranger {
+    writing-mode: vertical-lr;
+    direction: rtl;
+    vertical-align: middle;
+}
+
 datalist {
 
   font-family: sans-serif;
