@@ -3,7 +3,7 @@ var manifests = [];
 const categories = {
     "Utility": {
         "button": "apps-cards",
-        "view": "apps-cardbox"
+        "view": "utility-cardbox"
     },
     "Fun": {
         "button": "fun-cards",
@@ -19,6 +19,9 @@ const categories = {
     }
 
 }
+
+var stringUtil = new StringUtil();
+const appViews = {};
 
 function install() {
 
@@ -87,19 +90,34 @@ function play(name, url, height, width, scale) {
 }
 
 function display(manifest, id, callback) {
-    var element = document.getElementById("template");
-    var template = element.text;
+  
     var view = categories[manifest.category].view;
+    var category =manifest.category;
 
-    var cardValue = template.replace(/<%=callback%>/g, callback).
-        replace(/<%=id%>/g, id).
-        replace(/<%=image%>/g, manifest.manifest + "/" + manifest.image).
-        replace(/<%=label%>/g, manifest.label).
-        replace(/<%=view%>/g, view);
+    let template = document.getElementById("template").text;
 
-    var cards = document.getElementById(view);
+    let cardValue = stringUtil.substitute(template, {
+        "callback": callback,
+        "id": id,
+        "image":  manifest.manifest + "/" + manifest.image,
+        "view":  manifest.manifest + "/" + manifest.image
+    });
 
-    cards.innerHTML += cardValue;
+    if (!(view in appViews)) {
+
+        console.log("Adding View: " + view);
+
+        let catTab =  stringUtil.substitute(document.getElementById("app-tab-template").text, {"view": category});      
+        let catView = stringUtil.substitute(document.getElementById("app-views-template").text, {"view": category});       
+       
+        appViews[view] = {"tab":catTab, "view":catView}; 
+        
+        document.getElementById("app-tabs").appendChild(catTab);
+        document.getElementById("app-views").appendChild(catView);
+
+    }
+    
+    let fragment = appViews[view]["view"].appendChild(document.createRange().createContextualFragment(cardValue));
 
 }
 
@@ -165,6 +183,7 @@ function viewDetails(id, view) {
         `"${entry['play']['size']['height']}", ` +
         `"${entry['play']['size']['width']}", ` +
         `"${entry['play']['scale']}")`;
+
 }
 
 function playGame(id, view) {
@@ -246,6 +265,7 @@ window.api.on('load-complete', (channel, args) => {
         display(manifests[manifest], manifest, "details");
     }
 
+    /*
     document.getElementById(window.activeCards).style.display = "inline-block";
 
     var cards = document.getElementsByClassName('card');
@@ -253,6 +273,7 @@ window.api.on('load-complete', (channel, args) => {
     for (let card = 0; card < cards.length; card++) {
         cards[card].style.borderBottom = "3px solid white";
     }
+        */
 
 });
 
