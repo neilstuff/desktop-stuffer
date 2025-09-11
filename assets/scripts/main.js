@@ -98,6 +98,7 @@ function display(manifest, id, callback) {
     let cardValue = stringUtil.substitute(template, {
         "callback": callback,
         "id": id,
+        "label": manifest.label,
         "image": manifest.manifest + "/" + manifest.image,
         "view": manifest.manifest + "/" + manifest.image
     });
