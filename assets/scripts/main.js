@@ -21,7 +21,6 @@ const categories = {
 }
 
 var stringUtil = new StringUtil();
-const appViews = {};
 
 function install() {
 
@@ -90,34 +89,44 @@ function play(name, url, height, width, scale) {
 }
 
 function display(manifest, id, callback) {
-  
+
     var view = categories[manifest.category].view;
-    var category =manifest.category;
+    var category = manifest.category;
 
     let template = document.getElementById("template").text;
 
     let cardValue = stringUtil.substitute(template, {
         "callback": callback,
         "id": id,
-        "image":  manifest.manifest + "/" + manifest.image,
-        "view":  manifest.manifest + "/" + manifest.image
+        "image": manifest.manifest + "/" + manifest.image,
+        "view": manifest.manifest + "/" + manifest.image
     });
 
-    if (!(view in appViews)) {
+    if (!(view in window.appViews)) {
 
         console.log("Adding View: " + view);
 
-        let catTab =  stringUtil.substitute(document.getElementById("app-tab-template").text, {"view": category});      
-        let catView = stringUtil.substitute(document.getElementById("app-views-template").text, {"view": category});       
-       
-        appViews[view] = {"tab":catTab, "view":catView}; 
-        
+        let catTab = stringUtil.substitute(document.getElementById("app-tab-template").text, { "view": category });
+        let catView = stringUtil.substitute(document.getElementById("app-views-template").text, { "view": category });
+
+
+
+        if (window.activeView == null) {
+            window.activeView = `app-${category}-cards`;
+           
+        }
+
+        window.appViews[view] = { "tab": catTab, "view": catView, "id": `${category}-cardbox` };
+
         document.getElementById("app-tabs").appendChild(catTab);
         document.getElementById("app-views").appendChild(catView);
 
+        console.log(window.appViews[view]["id"]);
     }
-    
-    let fragment = appViews[view]["view"].appendChild(document.createRange().createContextualFragment(cardValue));
+
+    document.getElementById(window.appViews[view]["id"]).appendChild(cardValue);
+
+    console.log(document.getElementById("app-views").innerHTML);
 
 }
 
@@ -254,8 +263,8 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
 window.api.on('load-complete', (channel, args) => {
 
-    window.activeCards = "games-cards";
-    window.activeView = "games-cardbox";
+    window.appViews = {};
+    window.activeView = null;
 
     manifests = JSON.parse(args);
 
@@ -265,15 +274,62 @@ window.api.on('load-complete', (channel, args) => {
         display(manifests[manifest], manifest, "details");
     }
 
-    /*
-    document.getElementById(window.activeCards).style.display = "inline-block";
+    let tab_buttons = document.querySelectorAll(".tab-button");
+
+    console.log("Adding TAB view: " + tab_buttons.length);
+
+    tab_buttons.forEach((item) => {
+
+        item.addEventListener("click", (e) => {
+
+            function inactivateAll() {
+
+                let tab_buttons = document.querySelectorAll(".tab-button");
+
+                for (let tab_button = 0; tab_button < tab_buttons.length; tab_button++) {
+                    tab_buttons[tab_button].children[0].classList.replace("rotate-active", "rotate-inactive");
+                }
+
+            }
+
+            function hideAllViews() {
+
+                let views = document.querySelectorAll(".view");
+
+                for (let view = 0; view < views.length; view++) {
+                    views[view].style.display = "none";
+                }
+
+            }
+            console.log(`Clicking`);
+
+            if (e.currentTarget.children[0].classList.contains("rotate-inactive")) {
+
+                inactivateAll();
+
+                e.currentTarget.children[0].classList.replace("rotate-inactive", "rotate-active");
+
+                hideAllViews();
+
+                document.getElementById(`${e.currentTarget.id}-cards`).style.display = "inline-block";
+
+            }
+
+        });
+
+    });
+
+    console.log(`Showing: ${window.activeView}`);
+
+    document.getElementById(window.activeView).style.display = "inline-block";
+  
+    console.log(document.getElementById(window.activeView).innerHTML);
 
     var cards = document.getElementsByClassName('card');
 
     for (let card = 0; card < cards.length; card++) {
         cards[card].style.borderBottom = "3px solid white";
     }
-        */
 
 });
 
@@ -366,9 +422,9 @@ window.api.on('upload-complete', (channel, args) => {
     );
 
     console.log(package.icon)
-    
+
     var iconImage = nodeUtil.createImageNode(package.icon);
-    
+
     iconImage.style.height = "64px";
     iconImage.style.width = "64px";
 
@@ -376,7 +432,7 @@ window.api.on('upload-complete', (channel, args) => {
     document.getElementById("package-icon").appendChild(iconImage);
 
     var bannerImage = nodeUtil.createImageNode(package.banner);
-    
+
     bannerImage.style.height = `${height}%`;
     bannerImage.style.width = `${width}%`;
     bannerImage.id = "banner-image";
@@ -397,50 +453,6 @@ window.setTimeout(function () {
 
     window.setTimeout(function () {
         document.getElementById("main").style.display = "inline-block";
-
-        let tab_buttons = document.querySelectorAll(".tab-button");
-
-        tab_buttons.forEach((item) => {
-
-            item.addEventListener("click", (e) => {
-
-                function inactivateAll() {
-
-                    let tab_buttons = document.querySelectorAll(".tab-button");
-
-                    for (let tab_button = 0; tab_button < tab_buttons.length; tab_button++) {
-                        tab_buttons[tab_button].children[0].classList.replace("rotate-active", "rotate-inactive");
-                    }
-
-                }
-
-                function hideAllViews() {
-
-                    let views = document.querySelectorAll(".view");
-
-                    for (let view = 0; view < views.length; view++) {
-                        views[view].style.display = "none";
-                    }
-
-                }
-
-                if (e.currentTarget.children[0].classList.contains("rotate-inactive")) {
-
-                    inactivateAll();
-
-                    e.currentTarget.children[0].classList.replace("rotate-inactive", "rotate-active");
-
-                    hideAllViews();
-
-                    document.getElementById(`${e.currentTarget.id}-cards`).style.display = "inline-block";
-
-                }
-
-            });
-
-        });
-
-
     }, 1500);
 
 }, 500);

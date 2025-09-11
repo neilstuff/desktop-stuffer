@@ -20,14 +20,14 @@
     </script>
 
     <script type="text/template" id="app-tab-template">
-        <div id="<%=view%>-card" class="tab-button" style="left:5px; height:80px;">
+        <div id="app-<%=view%>-card" class="tab-button" style="left:5px; height:80px;">
             <div class="rotate-active"><%=view%></div>
         </div>
     </script>
 
     <script type="text/template" id="app-views-template">
-        <div id="<%=view%>-cards" class="view"
-            style="position: absolute; top: 50px; bottom: 10px; left: 35px; right: 310px; border: 1px solid rgba(0, 0, 0, 0.2); flex-wrap: wrap; align-content: flex-start; background-color: rgb(255, 255, 255); overflow: auto; display:none;">
+        <div id="app-<%=view%>-cards" class="view"
+            style="position: absolute; top: 5px; bottom:5px; left: 5px; right: 5px; flex-wrap: wrap; align-content: flex-start; overflow: auto; display:none;">
             <div id="<%=view%>-cardbox" class="cardbox"> </div>
         </div>
     </script>
@@ -212,7 +212,7 @@
         <div id="app-tabs" style="position: absolute; top: 50px;"> 
          </div>
 
-        <div id="app-views"> 
+        <div id="app-views" style="position: absolute; top: 50px; bottom: 10px; left: 40px; right: 310px; border: 1px solid rgba(0, 0, 0, 0.2);"> 
         </div>
 
         <div id="summary"
