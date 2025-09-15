@@ -72,23 +72,20 @@ function display(manifest, id, callback) {
     let template = document.getElementById("template").text;
 
     if (!(category in window.appViews)) {
-
-        console.log("Adding View: " + category);
-
-        let catTab = stringUtil.substitute(document.getElementById("app-tab-template").text, { "view": category });
         let catView = stringUtil.substitute(document.getElementById("app-views-template").text, { "view": category });
+        let catTab = null;
 
         if (window.activeView == null) {
             window.activeView = `app-${category}-cards`;
-           
+            catTab = stringUtil.substitute(document.getElementById("app-tab-template").text, { "view": category, "class": "rotate-active"});
+        } else {
+            catTab = stringUtil.substitute(document.getElementById("app-tab-template").text, { "view": category, "class": "rotate-inactive"});           
         }
 
         window.appViews[category] = { "tab": catTab, "view": catView, "id": `${category}-cardbox` };
 
         document.getElementById("app-tabs").appendChild(catTab);
         document.getElementById("app-views").appendChild(catView);
-
-        console.log(window.appViews[category]["id"]);
     }
 
     let cardValue = stringUtil.substitute(template, {
@@ -100,8 +97,6 @@ function display(manifest, id, callback) {
     });
 
     document.getElementById(window.appViews[category]["id"]).appendChild(cardValue);
-
-    console.log(document.getElementById("app-views").innerHTML);
 
 }
 
@@ -286,7 +281,7 @@ window.api.on('load-complete', (channel, args) => {
 
                 hideAllViews();
 
-                document.getElementById(`${e.currentTarget.id}-cards`).style.display = "inline-block";
+                document.getElementById(`${e.currentTarget.id}s`).style.display = "inline-block";
 
             }
 
@@ -294,11 +289,7 @@ window.api.on('load-complete', (channel, args) => {
 
     });
 
-    console.log(`Showing: ${window.activeView}`);
-
     document.getElementById(window.activeView).style.display = "inline-block";
-  
-    console.log(document.getElementById(window.activeView).innerHTML);
 
     var cards = document.getElementsByClassName('card');
 
@@ -341,7 +332,6 @@ window.api.on('install-complete', (channel, args) => {
 
 window.api.on('upload-complete', (channel, args) => {
     var package = JSON.parse(args);
-    console.log(package);
     var nodeUtil = new NodeUtil(document);
     var manifest = package.manifest.manifest;
 
@@ -395,8 +385,6 @@ window.api.on('upload-complete', (channel, args) => {
         }
 
     );
-
-    console.log(package.icon)
 
     var iconImage = nodeUtil.createImageNode(package.icon);
 

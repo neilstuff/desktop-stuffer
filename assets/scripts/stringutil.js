@@ -9,8 +9,6 @@ function StringUtil() {
              value = value.split("<%=" + keys[key] + "%>").join(values[keys[key]]);
         }
 
-        console.log(value);
-
         return document.createRange().createContextualFragment(value);
 
     }
