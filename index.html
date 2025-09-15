@@ -12,7 +12,7 @@
     <script src="assets/scripts/stringutil.js"></script>
 
     <script type="text/template" id="template">
-        <div id="cardview-<%=id%>" class="card" style="border-bottom: 3px, solid white;" 
+        <div id="card-<%=view%>-<%=id%>" class="card" style="border-bottom: 3px, solid white;" 
             onclick="<%=callback%>('click', '<%=id%>', '<%=view%>');" ondblclick="<%=callback%>('dblclick', '<%=id%>', '<%=view%>');">
             <img src="<%=image%>"></img>
             <label value="<%=label%>"><%=label%></label>

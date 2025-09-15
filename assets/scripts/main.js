@@ -1,25 +1,4 @@
 var manifests = [];
-
-const categories = {
-    "Utility": {
-        "button": "apps-cards",
-        "view": "utility-cardbox"
-    },
-    "Fun": {
-        "button": "fun-cards",
-        "view": "fun-cardbox"
-    },
-    "Game": {
-        "button": "games-cards",
-        "view": "games-cardbox"
-    },
-    "App": {
-        "button": "apps-cards",
-        "view": "apps-cardbox"
-    }
-
-}
-
 var stringUtil = new StringUtil();
 
 function install() {
@@ -89,43 +68,38 @@ function play(name, url, height, width, scale) {
 }
 
 function display(manifest, id, callback) {
-
-    var view = categories[manifest.category].view;
     var category = manifest.category;
-
     let template = document.getElementById("template").text;
 
-    let cardValue = stringUtil.substitute(template, {
-        "callback": callback,
-        "id": id,
-        "label": manifest.label,
-        "image": manifest.manifest + "/" + manifest.image,
-        "view": manifest.manifest + "/" + manifest.image
-    });
+    if (!(category in window.appViews)) {
 
-    if (!(view in window.appViews)) {
-
-        console.log("Adding View: " + view);
+        console.log("Adding View: " + category);
 
         let catTab = stringUtil.substitute(document.getElementById("app-tab-template").text, { "view": category });
         let catView = stringUtil.substitute(document.getElementById("app-views-template").text, { "view": category });
-
-
 
         if (window.activeView == null) {
             window.activeView = `app-${category}-cards`;
            
         }
 
-        window.appViews[view] = { "tab": catTab, "view": catView, "id": `${category}-cardbox` };
+        window.appViews[category] = { "tab": catTab, "view": catView, "id": `${category}-cardbox` };
 
         document.getElementById("app-tabs").appendChild(catTab);
         document.getElementById("app-views").appendChild(catView);
 
-        console.log(window.appViews[view]["id"]);
+        console.log(window.appViews[category]["id"]);
     }
 
-    document.getElementById(window.appViews[view]["id"]).appendChild(cardValue);
+    let cardValue = stringUtil.substitute(template, {
+        "callback": callback,
+        "id": id,
+        "label": manifest.label,
+        "image": manifest.manifest + "/" + manifest.image,
+        "view": manifest.category
+    });
+
+    document.getElementById(window.appViews[category]["id"]).appendChild(cardValue);
 
     console.log(document.getElementById("app-views").innerHTML);
 
