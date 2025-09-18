@@ -3,9 +3,6 @@ const {
     ipcRenderer
 } = require("electron");
 
-const fs = require('fs');
-const os = require('os');
-
 contextBridge.exposeInMainWorld(
     "api", {
         load: () => {

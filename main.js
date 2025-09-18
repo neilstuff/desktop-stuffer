@@ -17,6 +17,7 @@ const os = require('os');
 const https = require('https');
 var JSZip = require("jszip");
 var unzipper = require("unzipper");
+var admZip = require("adm-zip");
 
 var mainWindow = null;
 const PACKAGES = "packages"
@@ -378,4 +379,3 @@ ipcMain.on('upload', async function (event, arg) {
 
 ipcMain.on('compile', async function (event, arg) {
 });
-
