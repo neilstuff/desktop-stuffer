@@ -17,7 +17,7 @@ const os = require('os');
 const https = require('https');
 var JSZip = require("jszip");
 var unzipper = require("unzipper");
-var admZip = require("adm-zip");
+var AdmZip = require("adm-zip");
 
 var mainWindow = null;
 const PACKAGES = "packages"
@@ -288,6 +288,8 @@ ipcMain.on('upload', async function (event, arg) {
         var manifestPath = null;
         var context = null;
 
+        var archive = new AdmZip();
+
         var walk = function (dir) {
             var results = [];
             var list = fs.readdirSync(dir);
@@ -305,6 +307,8 @@ ipcMain.on('upload', async function (event, arg) {
                     if (file.endsWith(".manifest")) {
                         manifestPath = path;
                     }
+
+                    console.log(file);
 
                     results = results.concat(walk(path));
 
@@ -325,6 +329,8 @@ ipcMain.on('upload', async function (event, arg) {
                         bannerFile = context.manifest["display"]["image"];
 
                     }
+
+                    console.log(file);
 
                     results.push({
                         "directory": dir,
