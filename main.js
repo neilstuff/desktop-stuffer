@@ -283,12 +283,18 @@ ipcMain.on('upload', async function (event, arg) {
 
     if (selectedPaths) {
         console.log('Selected directory:', selectedPaths[0]);
+
+        var archiver = new AdmZip();
+        archiver.addLocalFolder(selectedPaths[0]);
+        
+        var zipBuffer = archiver.toBuffer();
+        var archive = zipBuffer.toString('base64');
+        fs.writeFileSync('output.zip', zipBuffer);
+
         var iconFile = null;
         var bannerFile = null;
         var manifestPath = null;
         var context = null;
-
-        var archive = new AdmZip();
 
         var walk = function (dir) {
             var results = [];
@@ -307,8 +313,6 @@ ipcMain.on('upload', async function (event, arg) {
                     if (file.endsWith(".manifest")) {
                         manifestPath = path;
                     }
-
-                    console.log(file);
 
                     results = results.concat(walk(path));
 
@@ -330,12 +334,10 @@ ipcMain.on('upload', async function (event, arg) {
 
                     }
 
-                    console.log(file);
-
                     results.push({
                         "directory": dir,
                         "file": file,
-                        "path": path,
+                        "path": path
                     });
 
                 }
@@ -363,6 +365,7 @@ ipcMain.on('upload', async function (event, arg) {
                 "files": files,
                 "manifest": context,
                 "icon": icon,
+                "archive": archive,
                 "banner": banner
             }));
 
