@@ -229,6 +229,12 @@ document.addEventListener("DOMContentLoaded", (event) => {
     document.getElementById("banner-width").addEventListener('change', async (e) => {
     });
 
+    document.getElementById("upload-icon").addEventListener('click', async (e) => {
+    });
+
+    document.getElementById("upload-banner").addEventListener('click', async (e) => {
+    });
+
 });
 
 window.api.on('load-complete', (channel, args) => {
