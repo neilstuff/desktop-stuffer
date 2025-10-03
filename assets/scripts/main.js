@@ -77,9 +77,9 @@ function display(manifest, id, callback) {
 
         if (window.activeView == null) {
             window.activeView = `app-${category}-cards`;
-            catTab = stringUtil.substitute(document.getElementById("app-tab-template").text, { "view": category, "class": "rotate-active"});
+            catTab = stringUtil.substitute(document.getElementById("app-tab-template").text, { "view": category, "class": "rotate-active" });
         } else {
-            catTab = stringUtil.substitute(document.getElementById("app-tab-template").text, { "view": category, "class": "rotate-inactive"});           
+            catTab = stringUtil.substitute(document.getElementById("app-tab-template").text, { "view": category, "class": "rotate-inactive" });
         }
 
         window.appViews[category] = { "tab": catTab, "view": catView, "id": `${category}-cardbox` };
@@ -230,9 +230,35 @@ document.addEventListener("DOMContentLoaded", (event) => {
     });
 
     document.getElementById("upload-icon").addEventListener('click', async (e) => {
+        var fileUtil = new FileUtil(document);
+
+        fileUtil.load(async (files) => {
+
+            const reader = new FileReader();
+            reader.onload = () => {
+                const uploadedImage = reader.result;
+                var nodeUtil = new NodeUtil(document);
+                var iconImage = nodeUtil.createImageNode(uploadedImage);
+
+                iconImage.style.height = "64px";
+                iconImage.style.width = "64px";
+
+                document.getElementById("package-icon").appendChild(iconImage);
+
+            };
+
+            reader.readAsDataURL(files[0]);
+
+        });
+
     });
 
     document.getElementById("upload-banner").addEventListener('click', async (e) => {
+        var fileUtil = new FileUtil(document);
+
+        fileUtil.load(async (files) => {
+
+        });
     });
 
 });
