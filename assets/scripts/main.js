@@ -257,6 +257,23 @@ document.addEventListener("DOMContentLoaded", (event) => {
         var fileUtil = new FileUtil(document);
 
         fileUtil.load(async (files) => {
+            const reader = new FileReader();
+            reader.onload = () => {
+                const uploadedImage = reader.result;
+                var nodeUtil = new NodeUtil(document);
+                var bannerImage = nodeUtil.createImageNode(uploadedImage);
+
+                bannerImage.id = "bannerImage";
+                document.getElementById("banner-width").value = "100";
+                document.getElementById("banner-height").value = "100";
+                bannerImage.width = "150";
+                bannerImage.height = "100";
+                
+                document.getElementById("package-banner").appendChild(bannerImage);
+
+            };
+
+            reader.readAsDataURL(files[0]);
 
         });
     });
