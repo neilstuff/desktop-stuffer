@@ -263,12 +263,12 @@ document.addEventListener("DOMContentLoaded", (event) => {
                 var nodeUtil = new NodeUtil(document);
                 var bannerImage = nodeUtil.createImageNode(uploadedImage);
 
-                bannerImage.id = "bannerImage";
+                bannerImage.id = "banner-image";
                 document.getElementById("banner-width").value = "100";
                 document.getElementById("banner-height").value = "100";
-                bannerImage.width = "150";
-                bannerImage.height = "100";
-                
+
+                bannerImage.style.width = "100%";
+                bannerImage.style.height = "100%";
                 document.getElementById("package-banner").appendChild(bannerImage);
 
             };
