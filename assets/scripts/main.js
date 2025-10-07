@@ -243,6 +243,9 @@ document.addEventListener("DOMContentLoaded", (event) => {
                 iconImage.style.height = "64px";
                 iconImage.style.width = "64px";
 
+                var nodeUtil = new NodeUtil(document);
+                nodeUtil.prune(document.getElementById("package-icon"));
+
                 document.getElementById("package-icon").appendChild(iconImage);
 
             };
@@ -269,6 +272,10 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
                 bannerImage.style.width = "100%";
                 bannerImage.style.height = "100%";
+
+                var nodeUtil = new NodeUtil(document);
+                nodeUtil.prune(document.getElementById("package-banner"));
+
                 document.getElementById("package-banner").appendChild(bannerImage);
 
             };
