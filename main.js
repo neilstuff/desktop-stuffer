@@ -14,7 +14,6 @@ const path = require('path');
 const url = require('url');
 const fs = require('fs');
 const os = require('os');
-const https = require('https');
 var JSZip = require("jszip");
 var unzipper = require("unzipper");
 var AdmZip = require("adm-zip");
@@ -41,9 +40,7 @@ function encodeBase64(filename) {
 function installPackage(filename) {
 
     return new Promise(async (accept, reject) => {
-        console.log("COPY - File name: " + filename);
-        console.log("COPY - Base Name: " + path.basename(filename));
-
+ 
         var destination = path.join(__dirname, PACKAGES, path.basename(filename));
 
         fs.copyFile(filename, destination, (err) => {
@@ -51,7 +48,6 @@ function installPackage(filename) {
                 reject(err);
             }
             accept(0);
-            console.log('File installed correctly');
         });
 
     });
@@ -282,14 +278,11 @@ ipcMain.on('upload', async function (event, arg) {
     });
 
     if (selectedPaths) {
-        console.log('Selected directory:', selectedPaths[0]);
-
         var archiver = new AdmZip();
         archiver.addLocalFolder(selectedPaths[0]);
         
         var zipBuffer = archiver.toBuffer();
         var archive = zipBuffer.toString('base64');
-        fs.writeFileSync('output.zip', zipBuffer);
 
         var iconFile = null;
         var bannerFile = null;
@@ -318,8 +311,6 @@ ipcMain.on('upload', async function (event, arg) {
 
                 } else {
                     if (file == "manifest.json") {
-                        console.log("Before Manifest");
-
                         const manifest = fs.readFileSync(path, "utf8");
 
                         context = {
@@ -350,13 +341,9 @@ ipcMain.on('upload', async function (event, arg) {
 
         var files = walk(selectedPaths[0]);
 
-        try {
-            console.log(`Manifest Path: ${manifestPath}`);
-            console.log(`Icon File: ${iconFile}`);
-            console.log(`Banner File: ${bannerFile}`);
-
-            var icon = await encodeBase64(path.join(manifestPath, iconFile));
-            var banner = await encodeBase64(path.join(manifestPath, bannerFile));
+        try {        
+            var icon = (iconFile != null) ? await encodeBase64(path.join(manifestPath, iconFile)) : "";
+            var banner = (bannerFile != null) ? await encodeBase64(path.join(manifestPath, bannerFile)) : "";
 
             icon = `data:image/png;base64,${icon}`;
             banner = `data:image/png;base64,${banner}`;
@@ -370,14 +357,12 @@ ipcMain.on('upload', async function (event, arg) {
             }));
 
         } catch (e) {
-            console.log(e);
 
             event.sender.send('upload-exception', e);
 
         }
 
     } else {
-        console.log('No directory selected.');
 
         event.sender.send('upload-exception', 'No directory selected');
 
@@ -387,4 +372,6 @@ ipcMain.on('upload', async function (event, arg) {
 });
 
 ipcMain.on('compile', async function (event, arg) {
+
+
 });

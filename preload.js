@@ -11,8 +11,8 @@ contextBridge.exposeInMainWorld(
         upload: () => {
             return ipcRenderer.send('upload');
         },
-        compile: () => {
-            return ipcRenderer.send('compile');
+        compile: (args) => {
+            return ipcRenderer.send('compile', args);
         },
         install: () => {
             return ipcRenderer.send('install');

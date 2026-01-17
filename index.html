@@ -8,9 +8,13 @@
     <link rel="stylesheet" href="assets/styles/main.css">
     <link rel="stylesheet" href="assets/styles/rotate.css">
 
+    
+    <script src="node_modules/jszip/dist/jszip.min.js"></script>
+
     <script src="assets/scripts/nodeutil.js"></script>
     <script src="assets/scripts/stringutil.js"></script>
     <script src="assets/scripts/fileutil.js"></script>
+    <script src="assets/scripts/compiler.js"></script>
 
     <script type="text/template" id="template">
         <div id="card-<%=view%>-<%=id%>" class="card" style="border-bottom: 3px, solid white;" 
@@ -104,7 +108,7 @@
                     </input>
                 </div>
                 <div style="position:absolute; top:55px; width:80px; right:72px; height:14px;">
-                    <input type="text" id="package-category" name="package-category" list="package-categories" style="font-size: 12px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+                    <input type="text" id="package-category" class="package-field" name="package-category" list="package-categories" style="font-size: 12px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
                         <datalist id="package-categories" style="font-size: 12px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
                             <option value="Game">  
                             <option value="Apps">
@@ -115,31 +119,31 @@
 
                 </div>
                 <div style="position:absolute; top:90px; left:0px; right:5px;">
-                    <textarea id="package-description" name="description" placeholder="package description" class="modal-text" 
+                    <textarea id="package-description" name="description" placeholder="package description" class="modal-text package-field" 
                              style="position:absolute; left:0px; right:10px; height:60px;"
                         name="package-description"></textarea>
                 </div>
                 <div style="position:absolute; top:170px; left:0px; right:5px;">
-                    <textarea id="package-notes" name="notes" placeholder="package notes" class="modal-text" 
+                    <textarea id="package-notes" name="notes" placeholder="package notes" class="modal-text package-field" 
                              style="position:absolute; left:0px; right:10px; height:60px;"
                         name="package-notes"></textarea>
                 </div>
                 <div id="package-banner" style="position:absolute; display: flex; justify-content: center; align-items: center; top:250px; left:0px; right:0px; height:200px; border:1px solid rgba(0, 0, 0, 0.2); background-color: rgba(0,0,255, 0.02); margin:auto;"></div>
                 <div style="position:absolute; top:455px; left:0px; right:0px; height:30px;">
-                    <input type="range" id="banner-width" name="width" min="0" max="100" value="100" style="position:absolute; left:0px; right:0px; height:5px;"></input>
+                    <input type="range" id="banner-width" class="package-field" name="width" min="0" max="100" value="100" style="position:absolute; left:0px; right:0px; height:5px;"></input>
                 </div>   
              
                 <div style="position:absolute; top:500px; left:0px; right:40px;">
-                    <input class="modal-entry" id="package-index" style="position:absolute; top:0px; left:0px; width:400px;" type="text"
+                    <input class="modal-entry" id="package-index" class="package-field" style="position:absolute; top:0px; left:0px; width:400px;" type="text"
                         name="package-index" placeholder="index.html">
                     </input>
-                    <input id="package-display-width" style="position:absolute; top:24px; left:0px; width:60px; z-index:10" min="100" max="1000" type="number"
+                    <input id="package-display-width" class="package-field" style="position:absolute; top:24px; left:0px; width:60px; z-index:10" min="100" max="1000" type="number"
                         name="package-display-width" placeholder="width">
                     </input>
-                    <input id="package-display-height" style="position:absolute; top:24px; left:80px; width:60px; z-index:10" min="100" max="1000" type="number"
+                    <input id="package-display-height" class="package-field" style="position:absolute; top:24px; left:80px; width:60px; z-index:10" min="100" max="1000" type="number"
                         name="package-display-height" placeholder="height">
                     </input>
-                    <input id="package-display-scale" style="position:absolute; top:24px; left:160px; width:60px; z-index:10" min="0" max="100" type="number"
+                    <input id="package-display-scale" class="package-field" style="position:absolute; top:24px; left:160px; width:60px; z-index:10" min="0" max="100" type="number"
                         name="package-diplay-scale" placeholder="scale">
                     </input>
                 </div>

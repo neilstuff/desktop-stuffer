@@ -28,14 +28,24 @@ NodeUtil.prototype.replace = function (node, ...children) {
 NodeUtil.prototype.setFields = function (...fields) {
 
     for (const field in fields) {
-        console.log("field.name: " + fields[field].name + " : " + fields[field].value);
-
         var element = this._document.getElementById(fields[field].name);
 
         element.value = fields[field].value;
 
     }
 
+}
+
+NodeUtil.prototype.getFields = function (className) {
+
+    var fields = document.getElementsByClassName(className);
+    var map = {};
+
+    for (const field in fields) {
+        map[field.id] = field.value;
+    }
+    return map;
+    
 }
 
 NodeUtil.prototype.setCheckBoxes = function (name, ...values) {

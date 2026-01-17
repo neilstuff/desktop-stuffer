@@ -12,11 +12,16 @@ function compile() {
     document.getElementById("compile-dialog").showModal();
 
 }
-
+/**
+ * Display the about panel
+ */
 function about() {
     document.getElementById('about-dialog').style.display = "inline-block";
 }
 
+/**
+ * Close all modal panels
+ */
 function close_modal_panel() {
     var dialogs = document.getElementsByClassName('modal')
 
@@ -33,6 +38,14 @@ function close_modal_panel() {
 
 }
 
+/**
+ * Play the selected package
+ * @param {*} name  the package name
+ * @param {*} url the package URL
+ * @param {*} height the package height
+ * @param {*} width the package width
+ * @param {*} scale the package scale
+ */
 function play(name, url, height, width, scale) {
     var element = document.getElementById("player");
 
@@ -67,6 +80,12 @@ function play(name, url, height, width, scale) {
 
 }
 
+/**
+ * Display a package manifest
+ * @param {*} manifest  the package manifest
+ * @param {*} id the package id
+ * @param {*} callback the callback function
+ */
 function display(manifest, id, callback) {
     var category = manifest.category;
     let template = document.getElementById("template").text;
@@ -100,14 +119,17 @@ function display(manifest, id, callback) {
 
 }
 
+/**
+ * View package details
+ * @param {*} id the package id
+ * @param {*} view the package view
+ */
 function viewDetails(id, view) {
     var element = document.getElementById("view");
     var template = element.text;
 
     var entry = manifests.find((manifest) => {
-
         return manifest.id == id;
-
     });
 
     var description = "";
@@ -210,6 +232,12 @@ document.addEventListener("DOMContentLoaded", (event) => {
     });
 
     document.getElementById("ok-compile-dialog").addEventListener('click', async (e) => {
+        var nodeUtil = new NodeUtil();
+        var package = nodeUtil.getFields("package-field");
+        var compiler = new Compiler(document);
+
+        compiler.compile(atob(window.archive), package);
+      
     });
 
     document.getElementById("banner-width").addEventListener('input', async (e) => {
@@ -287,6 +315,9 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
 });
 
+/**
+ * The archive has loaded
+ */
 window.api.on('load-complete', (channel, args) => {
 
     window.appViews = {};
@@ -301,8 +332,6 @@ window.api.on('load-complete', (channel, args) => {
     }
 
     let tab_buttons = document.querySelectorAll(".tab-button");
-
-    console.log("Adding TAB view: " + tab_buttons.length);
 
     tab_buttons.forEach((item) => {
 
@@ -327,8 +356,7 @@ window.api.on('load-complete', (channel, args) => {
                 }
 
             }
-            console.log(`Clicking`);
-
+ 
             if (e.currentTarget.children[0].classList.contains("rotate-inactive")) {
 
                 inactivateAll();
@@ -388,6 +416,9 @@ window.api.on('install-complete', (channel, args) => {
 
 window.api.on('upload-complete', (channel, args) => {
     var package = JSON.parse(args);
+    
+    window.archive = package.archive;
+    
     var nodeUtil = new NodeUtil(document);
     var manifest = package.manifest.manifest;
 
