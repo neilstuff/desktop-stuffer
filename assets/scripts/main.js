@@ -234,10 +234,39 @@ document.addEventListener("DOMContentLoaded", (event) => {
     document.getElementById("ok-compile-dialog").addEventListener('click', async (e) => {
         var nodeUtil = new NodeUtil();
         var package = nodeUtil.getFields("package-field");
+
+        var pacakgeTemplate = {
+            "image": "_('graphics/icon.png')",
+            "label": "$('package-name')",
+            "category": "$('package-categories')",
+            "language": "_('node.js')",
+            "description": "$('package-description')",
+            "notes": "$('package-notes').split('\\n')",
+            "display": {
+                "image": "_('graphics/package-banner.png')",
+                "width": "$('package-display-width')",
+                "height": "$('package-display-height')",
+                "margin": "_('20px')",
+                "border": "_('box-shadow: 5px 5px 15px 5px grey')"
+            },
+            "play": {
+                "index": "_('1')",
+                "size": {
+                    "width": "$('package-display-width')",
+                    "height": "$('package-display-height')"
+                },
+                "scale": "$('package-display-scale')"
+            }
+        };
+
+        var template = new Template(document);
+
+        template.substitute("package-field", pacakgeTemplate);
+
         var compiler = new Compiler(document);
 
-        compiler.compile(atob(window.archive), package);
-      
+        compiler.compile(atob(window.archive), package, window.icon, window.banner);
+
     });
 
     document.getElementById("banner-width").addEventListener('input', async (e) => {
@@ -356,7 +385,7 @@ window.api.on('load-complete', (channel, args) => {
                 }
 
             }
- 
+
             if (e.currentTarget.children[0].classList.contains("rotate-inactive")) {
 
                 inactivateAll();
@@ -416,9 +445,17 @@ window.api.on('install-complete', (channel, args) => {
 
 window.api.on('upload-complete', (channel, args) => {
     var package = JSON.parse(args);
-    
+
     window.archive = package.archive;
-    
+
+    if (!'manifest' in package) {
+        return;
+    }
+
+    window.manifest = package.manifest;
+    window.icon = package.icon;
+    window.banner = package.banner;
+
     var nodeUtil = new NodeUtil(document);
     var manifest = package.manifest.manifest;
 

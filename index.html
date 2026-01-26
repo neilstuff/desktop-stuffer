@@ -14,6 +14,7 @@
     <script src="assets/scripts/nodeutil.js"></script>
     <script src="assets/scripts/stringutil.js"></script>
     <script src="assets/scripts/fileutil.js"></script>
+    <script src="assets/scripts/template.js"></script>
     <script src="assets/scripts/compiler.js"></script>
 
     <script type="text/template" id="template">
@@ -91,7 +92,7 @@
         <div style="margin:-16px;">
             <div class="modal-header" style="background-color: black">
                 <span class="close" id="close" onclick="close_modal_panel()">&times;</span>
-                <h2 id="dialog_title">Compile</h2>
+                <h2 id="dialog-title">Compile</h2>
             </div>
 
             <div style="position:absolute; top:60px; left:10px; width:80px;">
@@ -103,7 +104,7 @@
                     <p class="modal-h1" style="font-size: 18px; font-weight: bold;">Enter Package Details</p>
                 </div>
                 <div style="position:absolute; top:50px; left:0px; right:40px;">
-                    <input class="modal-entry" id="package-name" style="position:absolute; left:0px; width:120px;" type="text"
+                    <input class="modal-entry package-field" id="package-name" style="position:absolute; left:0px; width:120px;" type="text"
                         name="package-name" placeholder="package name">
                     </input>
                 </div>
@@ -119,7 +120,7 @@
 
                 </div>
                 <div style="position:absolute; top:90px; left:0px; right:5px;">
-                    <textarea id="package-description" name="description" placeholder="package description" class="modal-text package-field" 
+                    <textarea id="package-description" name="description" class="template-value package-field" placeholder="package description" class="modal-text package-field" 
                              style="position:absolute; left:0px; right:10px; height:60px;"
                         name="package-description"></textarea>
                 </div>

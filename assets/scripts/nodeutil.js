@@ -37,13 +37,13 @@ NodeUtil.prototype.setFields = function (...fields) {
 }
 
 NodeUtil.prototype.getFields = function (className) {
-
     var fields = document.getElementsByClassName(className);
     var map = {};
 
     for (const field in fields) {
-        map[field.id] = field.value;
+         map[fields[field].id] = fields[field].value;
     }
+
     return map;
     
 }
