@@ -37,8 +37,8 @@ Compiler.prototype.compile = async function (zipBuffer, manifest, iconId, banner
     console.log(iconBuffer);
 
     package.file(".manifest/manifest.json", JSON.stringify(manifest, null, 4));
-    await package.file(`.manifest/graphics/icon.${icon[0].split('/')[1].split(';')[0]}`, iconBuffer);
-    await package.file(`.manifest/graphics/banner.${banner[0].split('/')[1].split(';')[0]}`, bannerBuffer);
+    package.file(`.manifest/graphics/icon.${icon[0].split('/')[1].split(';')[0]}`, iconBuffer);
+    package.file(`.manifest/graphics/banner.${banner[0].split('/')[1].split(';')[0]}`, bannerBuffer);
     
     var zipBuffer = await package.generateAsync({ type: "blob" });
 
