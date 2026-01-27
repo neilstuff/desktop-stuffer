@@ -16,6 +16,7 @@
     <script src="assets/scripts/fileutil.js"></script>
     <script src="assets/scripts/template.js"></script>
     <script src="assets/scripts/compiler.js"></script>
+    <script src="assets/scripts/packager.js"></script>
 
     <script type="text/template" id="template">
         <div id="card-<%=view%>-<%=id%>" class="card" style="border-bottom: 3px, solid white;" 
@@ -113,8 +114,9 @@
                         <datalist id="package-categories" style="font-size: 12px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
                             <option value="Game">  
                             <option value="Apps">
-                            <option value="Utiltiy">
+                            <option value="Utility">
                             <option value="Fun">
+                            <option value="Examples">
                         </datalist>
                     </input>
 
@@ -162,10 +164,10 @@
             </div>
 
             <button id="upload-icon" class="message-dialog-small-button" style="  position:absolute; top:170px; right:28px; width:80px;">
-               <img style="width:32px; height:32px;" src="assets/images/upload.svg" ></img></button>
+               <img style="width:32px; height:32px;" src="assets/images/load.svg" ></img></button>
             </button>
             <button id="upload-banner" class="message-dialog-small-button" style="  position:absolute; top:460px; right:28px; width:80px;">
-                <img style="width:32px; height:32px;" src="assets/images/upload.svg" >
+                <img style="width:32px; height:32px;" src="assets/images/load.svg" >
             </button>
             <div style="position:absolute; bottom:10px; left:10px; right:10px;">
                 <button id="cancel-compile-dialog" class="close-button message-dialog-small-cancel-button"

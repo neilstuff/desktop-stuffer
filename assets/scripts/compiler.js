@@ -5,8 +5,8 @@ function Compiler(document) {
 
 };
 
-Compiler.prototype.compile = async function (zipBuffer, manifest, iconBuffer, bannerBuffer) {
-    let packager = new JSZip();
+Compiler.prototype.compile = async function (zipBuffer, manifest, iconId, bannerId) {
+    let package = new JSZip();
 
     const promises = [];
 
@@ -17,7 +17,7 @@ Compiler.prototype.compile = async function (zipBuffer, manifest, iconBuffer, ba
         if (!zipEntry.dir && !zipEntry.name.startsWith(".manifest/")) {
 
             promises.push(zipEntry.async("arraybuffer").then(content => {
-                packager.file(zipEntry.name, content);
+                package.file(zipEntry.name, content);
             }));
         }
 
@@ -25,12 +25,23 @@ Compiler.prototype.compile = async function (zipBuffer, manifest, iconBuffer, ba
 
     await Promise.all(promises);
 
-    packager.file(".manifest/manifest.json", JSON.stringify(manifest));
-    packager.file(".manifest/graphics/icon.png", iconBuffer);
-    packager.file(".manifest/graphics/banner.png", bannerBuffer);
+    var bannerImage = document.getElementById(bannerId).src;
+    var iconImage = document.getElementById(iconId).src;
 
-    var data = await packager.generateAsync({ type: "base64" });
+    var banner = bannerImage.split(',');
+    var icon = iconImage.split(',');
+
+    var iconBuffer = atob(icon[1]);
+    var bannerBuffer = atob(banner[1]);
+
+    console.log(iconBuffer);
+
+    package.file(".manifest/manifest.json", JSON.stringify(manifest, null, 4));
+    await package.file(`.manifest/graphics/icon.${icon[0].split('/')[1].split(';')[0]}`, iconBuffer);
+    await package.file(`.manifest/graphics/banner.${banner[0].split('/')[1].split(';')[0]}`, bannerBuffer);
     
-    return data;
+    var zipBuffer = await package.generateAsync({ type: "blob" });
+
+    return zipBuffer;
 
 }

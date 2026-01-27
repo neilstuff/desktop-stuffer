@@ -33,14 +33,14 @@
     "license": "CC0-1.0",
     "dependencies": {
         "mime": "^3.0.0",
-        "jszip": "^3.9.1",
+        "jszip": "^3.10.1",
         "adm-zip": "^0.5.16",
         "unzipper": "^0.11.6"
     },
     "devDependencies": {
-        "electron": "^38.1.2",
-        "electron-builder": "^26.0.12",
-        "node": "^20.19.4"
+        "electron": "^40.0.0",
+        "electron-builder": "^26.4.0",
+        "node": "^25.4.0"
     },
     "bugs": {
         "url": "https://github.com/thesourorange/neilstuff/desktop-stuffer"

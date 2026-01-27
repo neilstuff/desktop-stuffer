@@ -232,40 +232,13 @@ document.addEventListener("DOMContentLoaded", (event) => {
     });
 
     document.getElementById("ok-compile-dialog").addEventListener('click', async (e) => {
-        var nodeUtil = new NodeUtil();
-        var package = nodeUtil.getFields("package-field");
+        var packer = new Packager(document);
 
-        var pacakgeTemplate = {
-            "image": "_('graphics/icon.png')",
-            "label": "$('package-name')",
-            "category": "$('package-categories')",
-            "language": "_('node.js')",
-            "description": "$('package-description')",
-            "notes": "$('package-notes').split('\\n')",
-            "display": {
-                "image": "_('graphics/package-banner.png')",
-                "width": "$('package-display-width')",
-                "height": "$('package-display-height')",
-                "margin": "_('20px')",
-                "border": "_('box-shadow: 5px 5px 15px 5px grey')"
-            },
-            "play": {
-                "index": "_('1')",
-                "size": {
-                    "width": "$('package-display-width')",
-                    "height": "$('package-display-height')"
-                },
-                "scale": "$('package-display-scale')"
-            }
-        };
+        var package = await packer.compile();
 
-        var template = new Template(document);
+        var fileUtil = new FileUtil(document);
 
-        template.substitute("package-field", pacakgeTemplate);
-
-        var compiler = new Compiler(document);
-
-        compiler.compile(atob(window.archive), package, window.icon, window.banner);
+        fileUtil.saveAs(package, `${document.getElementById("package-name").value}.zip`);
 
     });
 
@@ -297,6 +270,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
                 var nodeUtil = new NodeUtil(document);
                 var iconImage = nodeUtil.createImageNode(uploadedImage);
 
+                iconImage.id = "icon-image";
                 iconImage.style.height = "64px";
                 iconImage.style.width = "64px";
 
@@ -514,6 +488,7 @@ window.api.on('upload-complete', (channel, args) => {
 
     iconImage.style.height = "64px";
     iconImage.style.width = "64px";
+    iconImage.id = "icon-image";
 
     nodeUtil.prune(document.getElementById("package-icon"));
     document.getElementById("package-icon").appendChild(iconImage);
