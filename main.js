@@ -342,6 +342,7 @@ ipcMain.on('upload', async function (event, arg) {
         var files = walk(selectedPaths[0]);
 
         try {        
+            console.log("Upload Building");
             var icon = (iconFile != null) ? await encodeBase64(path.join(manifestPath, iconFile)) : "";
             var banner = (bannerFile != null) ? await encodeBase64(path.join(manifestPath, bannerFile)) : "";
 
@@ -350,14 +351,15 @@ ipcMain.on('upload', async function (event, arg) {
 
             event.sender.send('upload-complete', JSON.stringify({
                 "files": files,
-                "manifest": context,
+                "manifest": context == null ? "" : context,
                 "icon": icon,
                 "archive": archive,
                 "banner": banner
             }));
 
-        } catch (e) {
+            console.log("Upload Completed...");
 
+        } catch (e) {
             event.sender.send('upload-exception', e);
 
         }
@@ -372,6 +374,5 @@ ipcMain.on('upload', async function (event, arg) {
 });
 
 ipcMain.on('compile', async function (event, arg) {
-
 
 });

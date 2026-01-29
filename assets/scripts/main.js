@@ -1,9 +1,9 @@
 var manifests = [];
 var stringUtil = new StringUtil();
 
-function install() {
+function install(package) {
 
-    window.api.install();
+    window.api.install(package);
 
 }
 
@@ -12,6 +12,7 @@ function compile() {
     document.getElementById("compile-dialog").showModal();
 
 }
+
 /**
  * Display the about panel
  */
@@ -232,13 +233,19 @@ document.addEventListener("DOMContentLoaded", (event) => {
     });
 
     document.getElementById("ok-compile-dialog").addEventListener('click', async (e) => {
-        var packer = new Packager(document);
+        var packager = new Packager(document);
 
-        var package = await packer.compile();
+        var package = await packager.compile();
 
         var fileUtil = new FileUtil(document);
 
-        fileUtil.saveAs(package, `${document.getElementById("package-name").value}.zip`);
+        fileUtil.saveAs(package, `${document.getElementById("package-name").value.toLowerCase().replaceAll(" ", "-")}.zip`);
+
+    });
+
+    document.getElementById("ok-install-dialog").addEventListener('click', async (e) => {
+        var packager = new Packager(document);
+        var package = await packager.compile();
 
     });
 
@@ -422,7 +429,9 @@ window.api.on('upload-complete', (channel, args) => {
 
     window.archive = package.archive;
 
-    if (!'manifest' in package) {
+    console.log(JSON.stringify(package));
+
+    if (!'manifest' in package || package.manifest == "") {
         return;
     }
 
