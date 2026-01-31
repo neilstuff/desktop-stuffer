@@ -6,7 +6,7 @@ var packageTemplate = {
     "description": "$('package-description')",
     "notes": "$('package-notes').split('\\n')",
     "display": {
-        "image": "_('graphics/package-banner.png')",
+        "image": "_('graphics/banner.png')",
         "width": "$('package-display-width')",
         "height": "$('package-display-height')",
         "margin": "_('20px')",

@@ -41,11 +41,11 @@ NodeUtil.prototype.getFields = function (className) {
     var map = {};
 
     for (const field in fields) {
-         map[fields[field].id] = fields[field].value;
+        map[fields[field].id] = fields[field].value;
     }
 
     return map;
-    
+
 }
 
 NodeUtil.prototype.setCheckBoxes = function (name, ...values) {
@@ -72,5 +72,24 @@ NodeUtil.prototype.setCheckBoxes = function (name, ...values) {
     }
 
     return list;
+
+}
+
+NodeUtil.prototype.loadImage = async function (url) {
+
+    try {
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const arrayBuffer = await response.arrayBuffer();
+        return arrayBuffer;
+
+    } catch (error) {
+        console.error("Error fetching image as ArrayBuffer:", error);
+        throw error; // Re-throw the error for the caller to handle
+    }
 
 }
