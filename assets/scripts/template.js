@@ -56,13 +56,19 @@ Template.prototype.substitute = function (className, template) {
     };
 
     var _ = function (value) {
-        return value
+        return value;
     };
 
-    package = this._traverse(template, null, function (value) {
-        console.log(`Evaluating: ${value} : ${eval(value)} : ${Array.isArray(eval(value))}`);
-        
-        return eval(value)
+    var p = function (id) {
+        if (map[id] === undefined) {
+            return "";
+        }
+        return map[id] + "%";
+    };
+
+    var package = this._traverse(template, null, function (value) {
+         
+        return eval(value);
     
     });
 

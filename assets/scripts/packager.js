@@ -1,14 +1,14 @@
 var packageTemplate = {
     "image": "_('graphics/icon.png')",
     "label": "$('package-name')",
-    "category": "$('package-categories')",
+    "category": "$('package-category')",
     "language": "_('node.js')",
     "description": "$('package-description')",
     "notes": "$('package-notes').split('\\n')",
     "display": {
         "image": "_('graphics/banner.png')",
-        "width": "$('package-display-width')",
-        "height": "$('package-display-height')",
+        "width": "p('banner-width')",
+        "height": "p('banner-height')",
         "margin": "_('20px')",
         "border": "_('box-shadow: 5px 5px 15px 5px grey')"
     },
@@ -33,10 +33,10 @@ function Packager(document) {
             }
 
             const imageBlob = await response.blob();
-
             const imageObjectURL = URL.createObjectURL(imageBlob);
 
             return imageObjectURL;
+
         } catch (error) {
 
             console.error('Fetch error:', error);
