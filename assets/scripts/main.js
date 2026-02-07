@@ -325,30 +325,25 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
     window.packageDescription = new Quill('#package-description', {
         modules: {
-            toolbar:  [
-                [{ 'font': [] }],
-                ['bold', 'italic'],
-                ['blockquote'],
-                [{ list: 'ordered' }, { list: 'bullet' }],
-            ],
+            toolbar: {
+            container: '#description-toolbar' 
+            }
         },
-        theme: 'bubble',
-        placeholder: "package description..."
+        theme: 'snow',
+        placeholder: 'package description...'
     });
-
+  
     
     window.packageNotes = new Quill('#package-notes', {
         modules: {
-            toolbar:  [
-                [{ 'font': [] }],
-                ['bold', 'italic'],
-                ['blockquote'],
-                [{ list: 'ordered' }, { list: 'bullet' }],
-            ],
+            toolbar: {
+            container: '#notes-toolbar' 
+            }
         },
-        theme: 'bubble',
-        placeholder: "package notes..."
+        theme: 'snow',
+        placeholder: 'package notes...'
     });
+
 });
 
 /**
