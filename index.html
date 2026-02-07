@@ -7,10 +7,13 @@
 
     <link rel="stylesheet" href="assets/styles/main.css">
     <link rel="stylesheet" href="assets/styles/rotate.css">
+    <link rel="stylesheet" href="node_modules/quill/dist/quill.snow.css"/>
+    <link rel="stylesheet" href="node_modules/quill/dist/quill.bubble.css"/>
+    <link rel="stylesheet" href="node_modules/quill/dist/quill.core.css"/>
     <link rel="stylesheet" href="assets/styles/container.css">
     
     <script src="node_modules/jszip/dist/jszip.min.js"></script>
-
+    <script src="node_modules/quill/dist/quill.js"></script>
     <script src="assets/scripts/nodeutil.js"></script>
     <script src="assets/scripts/stringutil.js"></script>
     <script src="assets/scripts/fileutil.js"></script> 
@@ -90,27 +93,27 @@
 </head>
 
 <body style=" overflow:hidden">
-    <dialog id="compile-dialog" class="dialog" style="min-width:510px; height:720px; overflow: hidden;">
+    <dialog id="compile-dialog" class="dialog" style="min-width:610px; height:800px; overflow: hidden;">
         <div style="margin:-16px;">
             <div class="modal-header" style="background-color: black">
                 <span class="close" id="close" onclick="close_modal_panel()">&times;</span>
                 <h2 id="dialog-title">Compile</h2>
             </div>
 
-            <div style="position:absolute; top:60px; left:10px; width:80px;">
-                <img src="assets/images/compile.svg" width="64" height="64" style="float: left; margin-right:10px;" />
+            <div style="position:absolute; top:60px; left:10px; width:100px;">
+                <img src="assets/images/compile.svg" width="84" height="84" style="float: left; margin-right:10px;" />
             </div>
         
-            <div style="position:absolute; top:35px; left:100px; right:150px;">
+            <div style="position:absolute; top:45px; left:150px; right:150px;">
                 <div style="position:absolute; top:0; ">
                     <p class="modal-h1" style="font-size: 18px; font-weight: bold;">Enter Package Details</p>
                 </div>
-                <div style="position:absolute; top:50px; left:0px; right:40px;">
+                <div style="position:absolute; top:60px; left:0px; right:40px;">
                     <input class="modal-entry package-field" id="package-name" style="position:absolute; left:0px; width:120px;" type="text"
                         name="package-name" placeholder="package name">
                     </input>
                 </div>
-                <div style="position:absolute; top:55px; width:80px; right:72px; height:14px;">
+                <div style="position:absolute; top:65px; width:80px; right:72px; height:14px;">
                     <input type="text" id="package-category" class="package-field" name="package-category" list="package-categories" style="font-size: 12px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
                         <datalist id="package-categories" style="font-size: 12px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
                             <option value="Game">  
@@ -122,32 +125,18 @@
                     </input>
 
                 </div>
-                <div style="position:absolute; top:90px; left:0px; right:5px;">
-                    <textarea id="package-description" name="description" class="template-value modal-text package-field" placeholder="package description" class="modal-text package-field" 
-                             style="position:absolute; left:0px; right:10px; height:60px;"
-                        name="package-description"></textarea>
-                </div>
-                <div style="position:absolute; top:172px; left:0px; right:5px;">
-                    <div class="container" style="width:293px; height:24px; display:flex; flex-direction:row; ">
-                        <div class="container-selected">Edit</div>
-                        <div class="container-unselected">Preview</div>
-                    </div>
-
-                    <textarea id="package-notes" name="notes" placeholder="package notes" class="modal-text package-field" 
-                             style="position:absolute; left:0px; right:10px; height:150px;"
-                        name="package-notes"></textarea>
-
-                    <div id="package-preview" name="package-preview"  
-                             style="position:absolute; left:0px; right:10px; height:150px; border:1px solid black; display:none;">
-                    </div>
+                <div  id="package-description" style="position:absolute; top:100px; left:0px; height:100px; right:0px; border: 1px solid rgba(0,0,0,0.2);">
                 </div>
 
-                <div id="package-banner" style="position:absolute; display: flex; justify-content: center; align-items: center; top:370px; left:0px; right:0px; height:200px; border:1px solid rgba(0, 0, 0, 0.2); background-color: rgba(0,0,255, 0.02); margin:auto;"></div>
-                <div style="position:absolute; top:585px; left:0px; right:0px; height:30px;">
+                <div id="package-banner" style="position:absolute; display: flex; justify-content: center; align-items: center; top:210px; left:0px; right:0px; height:200px; border:1px solid rgba(0, 0, 0, 0.2); background-color: rgba(0,0,255, 0.02); margin:auto;"></div>
+                <div style="position:absolute; top:420px; left:0px; right:0px; height:30px;">
                     <input type="range" id="banner-width" class="package-field" name="width" min="0" max="100" value="100" style="position:absolute; left:0px; right:0px; height:5px;"></input>
-                </div>   
-             
-                <div style="position:absolute; top:610px; left:0px; right:40px;">
+                </div> 
+                 
+                <div id="package-notes" style="position:absolute; top:438px; height:240px; left:0px; right:0px; border: 1px solid rgba(0,0,0,0.2);">
+                </div>
+
+                <div style="position:absolute; top:690px; left:0px; right:40px;">
                     <input class="modal-entry" id="package-index" class="package-field" style="position:absolute; top:0px; left:0px; width:400px;" type="text"
                         name="package-index" placeholder="index.html">
                     </input>
@@ -163,22 +152,22 @@
                 </div>
                 
                 <div id="compile-message"
-                    style="color:rgba(255,0,0,0.6); position:absolute; top:520px; font-size: 12px; width:100%; height:24px;"></div>
+                    style="color:rgba(255,0,0,0.6); position:absolute; top:530px; font-size: 12px; width:100%; height:24px;"></div>
  
             </div>   
 
-            <div style="position:absolute; top:455px; left:296px; width:10px; height:370px;">
+            <div style="position:absolute; top:305px; left:396px; width:10px; height:370px;">
                 <input type="range" id="banner-height" name="height" min="0" max="100" value="100" style="position:absolute; width:210px; height:5px;" class="vranger package-field"></input>
             </div> 
 
-            <div id="package-icon" style="display: flex; justify-content: center; align-items: center; padding-top:5px; position:absolute; top:70px; width:76px; right:30px; height:80px; border:1px solid rgba(0, 0, 0, 0.2); background-color: rgba(0,0,255, 0.02); ">
+            <div id="package-icon" style="display: flex; justify-content: center; align-items: center; padding-top:5px; position:absolute; top:90px; width:76px; right:30px; height:80px; border:1px solid rgba(0, 0, 0, 0.2); background-color: rgba(0,0,255, 0.02); ">
             </div>
 
-            <button id="upload-icon" class="message-dialog-small-button" style="  position:absolute; top:160px; right:28px; width:80px;">
-               <img style="width:32px; height:32px;" src="assets/images/load.svg" ></img></button>
+            <button id="upload-icon" class="message-dialog-small-button" style="  position:absolute; top:185px; right:28px; width:80px;">
+               <img style="width:24px; height:24px;" src="assets/images/load.svg" ></img></button>
             </button>
-            <button id="upload-banner" class="message-dialog-small-button" style="  position:absolute; top:400px; right:28px; width:80px;">
-                <img style="width:32px; height:32px;" src="assets/images/load.svg" >
+            <button id="upload-banner" class="message-dialog-small-button" style="  position:absolute; top:330px; right:28px; width:80px;">
+                <img style="width:24px; height:24px;" src="assets/images/load.svg" >
             </button>
             <div style="position:absolute; bottom:10px; left:10px; right:10px;">
                 <button id="cancel-compile-dialog" class="close-button message-dialog-small-cancel-button"

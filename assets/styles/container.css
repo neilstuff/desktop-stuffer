@@ -1,31 +1,4 @@
-.container {
-  display: flex;
-  background-color: rgba(51, 102, 153, 0.2);
-}
-
-.container-selected {
-  background-color: rgba(51, 102, 153, 0.8); 
-  text-decoration: underline;
-  margin-left: 0px;
-  margin-right: 2px;
-  margin-bottom: 0px;
-  padding: 4px;
-  color:rgb(255, 255, 255);
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  font-size: 12px;
-  width: 50px;
-  text-align: center;
-}
-
-.container-unselected {
-  background-color: rgba(51, 102, 153, 0.4);
-  margin-left: 0px;
-  margin-right: 2px;
-  margin-bottom: 0px;
-  padding: 4px;
-  color:rgb(255, 255, 255);
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  font-size: 12px;
-  width: 50px;
-  text-align: center;
+.ql-bubble .ql-tooltip {
+  max-width: 350px; /* Set your desired maximum width */
+  width: 350px;     /* Allow the width to adjust dynamically within the max-width */
 }

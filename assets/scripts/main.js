@@ -323,6 +323,32 @@ document.addEventListener("DOMContentLoaded", (event) => {
         });
     });
 
+    window.packageDescription = new Quill('#package-description', {
+        modules: {
+            toolbar:  [
+                [{ 'font': [] }],
+                ['bold', 'italic'],
+                ['blockquote'],
+                [{ list: 'ordered' }, { list: 'bullet' }],
+            ],
+        },
+        theme: 'bubble',
+        placeholder: "package description..."
+    });
+
+    
+    window.packageNotes = new Quill('#package-notes', {
+        modules: {
+            toolbar:  [
+                [{ 'font': [] }],
+                ['bold', 'italic'],
+                ['blockquote'],
+                [{ list: 'ordered' }, { list: 'bullet' }],
+            ],
+        },
+        theme: 'bubble',
+        placeholder: "package notes..."
+    });
 });
 
 /**
@@ -455,14 +481,6 @@ window.api.on('upload-complete', (channel, args) => {
             "value": manifest["category"]
         },
         {
-            "name": "package-description",
-            "value": manifest["description"]
-        },
-        {
-            "name": "package-notes",
-            "value": manifest["notes"]
-        },
-        {
             "name": "package-index",
             "value": manifest["play"]["index"]
         },
@@ -492,6 +510,9 @@ window.api.on('upload-complete', (channel, args) => {
         }
 
     );
+
+    packageDescription.setContents(packageDescription.clipboard.convert({html:manifest["description"].join("<br>")}), 'silent');
+    packageNotes.setContents(packageDescription.clipboard.convert({html:manifest["notes"].join("<br>")}), 'silent');
 
     var iconImage = nodeUtil.createImageNode(package.icon);
 
