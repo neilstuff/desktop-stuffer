@@ -46,17 +46,22 @@ Compiler.prototype.compile = async function (zipBuffer, manifest, iconId, banner
 
     await Promise.all(promises);
 
-    var bannerImage = document.getElementById(bannerId).src;
-    var iconImage = document.getElementById(iconId).src;
-
-    var iconBuffer = await arrayBufferFromBase64Image(iconImage);
-    var bannerBuffer = await arrayBufferFromBase64Image(bannerImage);
-
-    console.log(iconBuffer);
-
     package.file(".manifest/manifest.json", JSON.stringify(manifest, null, 4));
-    package.file(`.manifest/graphics/icon.${iconImage.split('/')[1].split(';')[0]}`, iconBuffer);
-    package.file(`.manifest/graphics/banner.${bannerImage.split('/')[1].split(';')[0]}`, bannerBuffer);
+
+
+    if (document.getElementById(iconId) && document.getElementById(iconId).src) {
+        var iconImage = document.getElementById(iconId).src;
+        var iconBuffer = await arrayBufferFromBase64Image(iconImage);
+
+        package.file(`.manifest/graphics/icon.${iconImage.split('/')[1].split(';')[0]}`, iconBuffer);
+    }
+
+    if (document.getElementById(bannerId) && document.getElementById(bannerId).src) {
+        var bannerImage = document.getElementById(bannerId).src;
+        var bannerBuffer = await arrayBufferFromBase64Image(bannerImage);
+
+        package.file(`.manifest/graphics/banner.${bannerImage.split('/')[1].split(';')[0]}`, bannerBuffer);
+    }
 
     var zipBuffer = await package.generateAsync({ type: "blob" });
 

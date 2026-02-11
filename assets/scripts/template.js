@@ -64,6 +64,12 @@ Template.prototype.substitute = function (className, template) {
             return "";
         }
         return map[id] + "%";
+    }
+
+    var e = function (value) {
+     
+        return eval(value);
+
     };
 
     var package = this._traverse(template, null, function (value) {

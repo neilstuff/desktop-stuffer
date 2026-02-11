@@ -3,8 +3,8 @@ var packageTemplate = {
     "label": "$('package-name')",
     "category": "$('package-category')",
     "language": "_('node.js')",
-    "description": "$('package-description')",
-    "notes": "$('package-notes').split('\\n')",
+    "description": "e('window.packageDescription.getSemanticHTML()')",
+    "notes": "e('window.packageNotes.getSemanticHTML()').split('\\n')",
     "display": {
         "image": "_('graphics/banner.png')",
         "width": "p('banner-width')",
@@ -20,6 +20,7 @@ var packageTemplate = {
         },
         "scale": "$('package-display-scale')"
     }
+    
 };
 
 function Packager(document) {
@@ -48,7 +49,6 @@ function Packager(document) {
 }
 
 Packager.prototype.compile = async function (icon, banner) {
-
     var template = new Template(this._document);
     var package = template.substitute("package-field", packageTemplate);
     var compiler = new Compiler(this._document);
