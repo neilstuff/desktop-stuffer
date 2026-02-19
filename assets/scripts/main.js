@@ -70,7 +70,6 @@ function play(name, url, height, width, scale) {
         replace('<%=viewport-height%>', viewportHeight).
         replace('<%=scale%>', parseFloat(scale));
 
-
     document.getElementById('viewer').innerHTML = html;
 
     var top = (window.innerHeight / 2) - (adjustedHeight / 2) - 40;
@@ -87,7 +86,7 @@ function play(name, url, height, width, scale) {
  * @param {*} id the package id
  * @param {*} callback the callback function
  */
-function display(manifest, id, callback) {
+async function display(manifest, id, callback) {
     var category = manifest.category;
     let template = document.getElementById("template").text;
 
@@ -108,11 +107,14 @@ function display(manifest, id, callback) {
         document.getElementById("app-views").appendChild(catView);
     }
 
+    var imageUtil = new ImageUtil(manifest.manifest + "/" + manifest.image);    
+    var icon = await imageUtil.check("assets/images/default-icon.png")
+
     let cardValue = stringUtil.substitute(template, {
         "callback": callback,
         "id": id,
         "label": manifest.label,
-        "image": manifest.manifest + "/" + manifest.image,
+        "image": icon,
         "view": manifest.category
     });
 
@@ -125,7 +127,18 @@ function display(manifest, id, callback) {
  * @param {*} id the package id
  * @param {*} view the package view
  */
-function viewDetails(id, view) {
+async function viewDetails(id, view) {
+    function missingImage(html) {
+
+        html = html.replace(/<%=display%>/g, "assets/images/screenshot-missing.png");
+        html = html.replace(/<%=width%>/g, "100%");
+        html = html.replace(/<%=height%>/g, "100%");
+        html = html.replace(/<%=border%>/g, "none");
+        html = html.replace(/<%=margin%>/g, "0px");
+
+        return html;
+
+    }
     var element = document.getElementById("view");
     var template = element.text;
 
@@ -143,12 +156,20 @@ function viewDetails(id, view) {
         replace(/<%=description%>/g, description);
 
     if ('display' in entry) {
-        html = html.replace(/<%=display%>/g, entry.manifest + "/" +
-            entry.display.image);
-        html = html.replace(/<%=width%>/g, entry.display.width);
-        html = html.replace(/<%=height%>/g, entry.display.height);
-        html = html.replace(/<%=border%>/g, entry.display.border);
-        html = html.replace(/<%=margin%>/g, entry.display.margin);
+        var imageUtil = new ImageUtil(entry.manifest + "/" + entry.display.image);
+
+        if (!await imageUtil.exists()) {
+            html = missingImage(html);
+        } else {
+            html = html.replace(/<%=display%>/g, entry.manifest + "/" +
+                entry.display.image);
+            html = html.replace(/<%=width%>/g, entry.display.width);
+            html = html.replace(/<%=height%>/g, entry.display.height);
+            html = html.replace(/<%=border%>/g, entry.display.border);
+            html = html.replace(/<%=margin%>/g, entry.display.margin);
+        }
+    } else {
+        html = missingImage(html);
     }
 
     var notes = "";
@@ -326,18 +347,18 @@ document.addEventListener("DOMContentLoaded", (event) => {
     window.packageDescription = new Quill('#package-description', {
         modules: {
             toolbar: {
-            container: '#description-toolbar' 
+                container: '#description-toolbar'
             }
         },
         theme: 'snow',
         placeholder: 'package description...'
     });
-  
-    
+
+
     window.packageNotes = new Quill('#package-notes', {
         modules: {
             toolbar: {
-            container: '#notes-toolbar' 
+                container: '#notes-toolbar'
             }
         },
         theme: 'snow',
@@ -360,6 +381,7 @@ window.api.on('load-complete', (channel, args) => {
         manifests[manifest]["id"] = manifest;
 
         display(manifests[manifest], manifest, "details");
+
     }
 
     let tab_buttons = document.querySelectorAll(".tab-button");
@@ -450,8 +472,6 @@ window.api.on('upload-complete', (channel, args) => {
 
     window.archive = package.archive;
 
-    console.log(JSON.stringify(package));
-
     if (!'manifest' in package || package.manifest == "") {
         return;
     }
@@ -506,8 +526,8 @@ window.api.on('upload-complete', (channel, args) => {
 
     );
 
-    packageDescription.setContents(packageDescription.clipboard.convert({html:manifest["description"].join("<br>")}), 'silent');
-    packageNotes.setContents(packageDescription.clipboard.convert({html:manifest["notes"].join("<br>")}), 'silent');
+    packageDescription.setContents(packageDescription.clipboard.convert({ html: manifest["description"].join("<br>") }), 'silent');
+    packageNotes.setContents(packageDescription.clipboard.convert({ html: manifest["notes"].join("<br>") }), 'silent');
 
     var iconImage = nodeUtil.createImageNode(package.icon);
 

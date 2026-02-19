@@ -29,7 +29,7 @@ function encodeBase64(filename) {
                 reject(error);
             } else {
                 var dataBase64 = data.toString('base64');
-                 accept(dataBase64);
+                accept(dataBase64);
             }
         });
 
@@ -40,7 +40,7 @@ function encodeBase64(filename) {
 function installPackage(filename) {
 
     return new Promise(async (accept, reject) => {
- 
+
         var destination = path.join(__dirname, PACKAGES, path.basename(filename));
 
         fs.copyFile(filename, destination, (err) => {
@@ -126,7 +126,9 @@ function readZip(base, filename) {
 
             manifest["filename"] = filename;
             manifest["base"] = archive;
-            manifest["url"] = path.join(CACHE, archive, "index.html");
+            manifest["url"] = path.join(CACHE, 
+                                archive,
+                                 manifest.play.index != null ? manifest.play.index : "index.html");
             manifest["manifest"] = path.join(CACHE, archive, ".manifest");
             manifest["path"] = path.join(CACHE, base);
 
@@ -280,7 +282,7 @@ ipcMain.on('upload', async function (event, arg) {
     if (selectedPaths) {
         var archiver = new AdmZip();
         archiver.addLocalFolder(selectedPaths[0]);
-        
+
         var zipBuffer = archiver.toBuffer();
         var archive = zipBuffer.toString('base64');
 
@@ -341,7 +343,7 @@ ipcMain.on('upload', async function (event, arg) {
 
         var files = walk(selectedPaths[0]);
 
-        try {        
+        try {
             console.log("Upload Building");
             var icon = (iconFile != null) ? await encodeBase64(path.join(manifestPath, iconFile)) : "";
             var banner = (bannerFile != null) ? await encodeBase64(path.join(manifestPath, bannerFile)) : "";
