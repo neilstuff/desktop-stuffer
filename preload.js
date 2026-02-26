@@ -14,6 +14,9 @@ contextBridge.exposeInMainWorld(
         compile: (args) => {
             return ipcRenderer.send('compile', args);
         },
+        plonk: (args) => {
+            return ipcRenderer.send('plonk', args);
+        },
         install: (args) => {
             return ipcRenderer.send('install');
         },

@@ -94,6 +94,14 @@
 </head>
 
 <body style=" overflow:hidden">
+    <dialog id="message-dialog" class="dialog message-dialog" style="min-width:400px;">
+        <img src="assets/images/exclamation.svg" width="48" height="48" style="float: left; margin-right:10px;" />
+        <p id="information-message" style="font-size: 12px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">/p>
+        <form method="dialog">
+            <button class="message-dialog-small-button" style="float: right; width:70px;">OK</button>
+        </form>
+    </dialog>
+
     <dialog id="compile-dialog" class="dialog" style="min-width:640px; height:800px; overflow: hidden;">
         <div style="margin:-16px;">
             <div class="modal-header" style="background-color: black">

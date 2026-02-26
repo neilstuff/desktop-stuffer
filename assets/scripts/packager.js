@@ -20,7 +20,7 @@ var packageTemplate = {
         },
         "scale": "$('package-display-scale')"
     }
-    
+
 };
 
 function Packager(document) {
@@ -49,10 +49,48 @@ function Packager(document) {
 }
 
 Packager.prototype.compile = async function (icon, banner) {
+
     var template = new Template(this._document);
     var package = template.substitute("package-field", packageTemplate);
     var compiler = new Compiler(this._document);
 
     return await compiler.compile(atob(window.archive), package, "icon-image", "banner-image");
+
+}
+
+
+Packager.prototype.compile = async function (icon, banner) {
+
+    var template = new Template(this._document);
+    var package = template.substitute("package-field", packageTemplate);
+    var compiler = new Compiler(this._document);
+
+    return await compiler.compile(atob(window.archive), package, "icon-image", "banner-image");
+
+}
+
+Packager.prototype.package = async function (icon, banner) {
+
+    function blobToBase64(blob) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result); // Base64 string
+            reader.onerror = reject;
+            reader.readAsDataURL(blob); // Converts Blob to Base64
+        });
+    }
+
+    var template = new Template(this._document);
+    var package = template.substitute("package-field", packageTemplate);
+    var compiler = new Compiler(this._document);
+
+    var zipPackage = await compiler.compile(atob(window.archive), package, "icon-image", "banner-image");
+
+    var content = await blobToBase64(zipPackage);
+
+    return {
+        "filename": `${package.label.replace(/\s+/g, '-').toLowerCase()}.zip `,
+        "content": content
+    };
 
 }

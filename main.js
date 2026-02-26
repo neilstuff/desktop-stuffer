@@ -126,9 +126,9 @@ function readZip(base, filename) {
 
             manifest["filename"] = filename;
             manifest["base"] = archive;
-            manifest["url"] = path.join(CACHE, 
-                                archive,
-                                 manifest.play.index != null ? manifest.play.index : "index.html");
+            manifest["url"] = path.join(CACHE,
+                archive,
+                manifest.play.index != null ? manifest.play.index : "index.html");
             manifest["manifest"] = path.join(CACHE, archive, ".manifest");
             manifest["path"] = path.join(CACHE, base);
 
@@ -189,8 +189,6 @@ app.on('ready', () => {
 
 ipcMain.on('install', async function (event) {
 
-    console.log(os.type());
-
     var result = await dialog.showOpenDialogSync(os.type() != 'Darwin' ? {
         properties: ['createDirectory'],
         filters: [
@@ -219,6 +217,13 @@ ipcMain.on('install', async function (event) {
 
         event.sender.send('install-complete', JSON.stringify(manifest));
     }
+
+});
+
+ipcMain.on('plonk', async function (event, arg) {
+
+    console.log(`Plonking... ${arg.filename}`);
+    event.sender.send('plonk-complete');
 
 });
 
@@ -371,10 +376,5 @@ ipcMain.on('upload', async function (event, arg) {
         event.sender.send('upload-exception', 'No directory selected');
 
     }
-
-
-});
-
-ipcMain.on('compile', async function (event, arg) {
 
 });

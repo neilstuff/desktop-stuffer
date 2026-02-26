@@ -7,6 +7,12 @@ function install(package) {
 
 }
 
+function plonk(package) {
+
+    window.api.plonk(package);
+
+}
+
 function compile() {
 
     document.getElementById("compile-dialog").showModal();
@@ -17,7 +23,9 @@ function compile() {
  * Display the about panel
  */
 function about() {
+
     document.getElementById('about-dialog').style.display = "inline-block";
+
 }
 
 /**
@@ -265,9 +273,20 @@ document.addEventListener("DOMContentLoaded", (event) => {
     });
 
     document.getElementById("ok-install-dialog").addEventListener('click', async (e) => {
-        var packager = new Packager(document);
-        var package = await packager.compile();
 
+        console.log("Attempting to install package...");
+
+        var packager = new Packager(document);
+        var package = await packager.package();
+
+        plonk(package);
+
+        document.getElementById("information-message").innerText = "Package installed successfully.";
+        
+        document.getElementById("message-dialog").close();
+        
+        return false;
+    
     });
 
     document.getElementById("banner-width").addEventListener('input', async (e) => {
@@ -551,9 +570,28 @@ window.api.on('upload-complete', (channel, args) => {
 
 window.api.on('upload-exception', (channel, args) => {
 
-    alert('upload-exception');
+    document.getElementById("information-message").innerText = args;
+
+    document.getElementById("message-dialog").showModal();
 
 });
+
+window.api.on('upload-complete', (channel, args) => {
+    
+    document.getElementById("information-message").innerText = "Upload completely. You can now install the package or edit the manifest details.";
+
+    document.getElementById("message-dialog").showModal();
+
+});
+
+window.api.on('plonk-complete', (channel, args) => {
+    
+    document.getElementById("information-message").innerText = "Plonk complete - Package installed successfully - restart application to see changes.";
+
+    document.getElementById("message-dialog").showModal();
+
+});
+
 
 window.setTimeout(function () {
     document.getElementById("splash-page").classList.toggle("hidden");
