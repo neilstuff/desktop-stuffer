@@ -49,11 +49,11 @@ function close_modal_panel() {
 
 /**
  * Play the selected package
- * @param {*} name  the package name
- * @param {*} url the package URL
- * @param {*} height the package height
- * @param {*} width the package width
- * @param {*} scale the package scale
+ * @param {string} name  the package name
+ * @param {string} url the package URL
+ * @param {string} height the package height
+ * @param {string} width the package width
+ * @param {string*} scale the package scale
  */
 function play(name, url, height, width, scale) {
     var element = document.getElementById("player");
@@ -91,7 +91,7 @@ function play(name, url, height, width, scale) {
 /**
  * Display a package manifest
  * @param {*} manifest  the package manifest
- * @param {*} id the package id
+ * @param {string} id the package id
  * @param {*} callback the callback function
  */
 async function display(manifest, id, callback) {
@@ -132,7 +132,7 @@ async function display(manifest, id, callback) {
 
 /**
  * View package details
- * @param {*} id the package id
+ * @param {string} id the package id
  * @param {*} view the package view
  */
 async function viewDetails(id, view) {
