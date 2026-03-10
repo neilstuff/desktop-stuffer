@@ -115,7 +115,7 @@ async function display(manifest, id, callback) {
         document.getElementById("app-views").appendChild(catView);
     }
 
-    var imageUtil = new ImageUtil(manifest.manifest + "/" + manifest.image);    
+    var imageUtil = new ImageUtil(manifest.manifest + "/" + manifest.image);
     var icon = await imageUtil.check("assets/images/default-icon.png")
 
     let cardValue = stringUtil.substitute(template, {
@@ -282,11 +282,11 @@ document.addEventListener("DOMContentLoaded", (event) => {
         plonk(package);
 
         document.getElementById("information-message").innerText = "Package installed successfully.";
-        
+
         document.getElementById("message-dialog").close();
-        
+
         return false;
-    
+
     });
 
     document.getElementById("banner-width").addEventListener('input', async (e) => {
@@ -361,6 +361,12 @@ document.addEventListener("DOMContentLoaded", (event) => {
             reader.readAsDataURL(files[0]);
 
         });
+    });
+
+    document.getElementById("restart-dialog-ok").addEventListener('click', async (e) => {
+
+        window.api.load();
+
     });
 
     window.packageDescription = new Quill('#package-description', {
@@ -577,18 +583,17 @@ window.api.on('upload-exception', (channel, args) => {
 });
 
 window.api.on('upload-complete', (channel, args) => {
-    
-    document.getElementById("information-message").innerText = "Upload completely. You can now install the package or edit the manifest details.";
+
+    document.getElementById("information-message").innerText = "Upload complete - Package uploaded successfully - restart application to see changes.";
 
     document.getElementById("message-dialog").showModal();
+
 
 });
 
 window.api.on('plonk-complete', (channel, args) => {
-    
-    document.getElementById("information-message").innerText = "Plonk complete - Package installed successfully - restart application to see changes.";
 
-    document.getElementById("message-dialog").showModal();
+    document.getElementById("restart-dialog").showModal();
 
 });
 
